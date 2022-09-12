@@ -1,0 +1,15 @@
+{
+  "name": "cutting",
+  "version": "1.0.0",
+  "description": "Linear Cutting Project",
+  "main": "webpack.config.js",
+  "scripts": {
+    "prod": "webpack --env prod",
+    "dev": "webpack --env dev"
+  },
+  "author": "Denis Kapitulin",
+  "license": "ISC",
+  "devDependencies": {
+    "terser-webpack-plugin": "^5.3.1"
+  }
+}

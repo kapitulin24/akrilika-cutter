@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Akrilika Cutter</title>
+  <style>
+    body {
+      counter-reset: plate;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 3fr 5fr;
+      gap: 10px;
+    }
+    [type="number"] {
+      width: 100px;
+    }
+    canvas {
+      width: 95vw;
+      border: 2px solid #000;
+    }
+    .plate {
+      position: relative;
+      margin-top: 35px;
+    }
+    .plate:after {
+      counter-increment: plate;
+      content: 'Лист' counter(plate);
+      position: absolute;
+      top: -30px;
+      left: 0;
+      font-size: 30px;
+      font-weight: bold;
+
+    }
+    label {
+      line-height: 30px;
+    }
+    input {
+      margin: 0 10px;
+    }
+    .errors {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+<form class="grid" action="#" id="form">
+  <div>
+    <div>
+      <label>
+        Наименование изделия
+        <input type="text" name="name" value="name">
+      </label>
+    </div>
+    <div>
+      <label>
+        Наименование части изделия
+        <input type="text" name="partName" value="part">
+      </label>
+    </div>
+    <div>
+      <label>
+        Использовать имя как префикс
+        <input type="checkbox" name="nameIsPrefix" value="true">
+      </label>
+    </div>
+    <div>
+      <label>
+        Длина заготовки
+        <input type="number" name="length" value="3660">
+        мм
+      </label>
+    </div>
+    <div>
+      <label>
+        Ширина заготовки
+        <input type="number" name="height" value="760">
+        мм
+      </label>
+    </div>
+    <div>Части продажи
+      <label>
+        0,25
+        <input type="radio" name="step" value="0.25" checked>
+      </label>
+      <label>
+        0,5
+        <input type="radio" name="step" value="0.5">
+      </label>
+    </div>
+    <div>
+      <label>
+        Минимально возможный остаток
+        <input type="number" name="minPart" value="12">
+        мм
+      </label>
+    </div>
+    <div>
+      <label>
+        Максимальное количество стыковок
+        <input type="number" name="maxStack" value="1">
+      </label>
+    </div>
+    <div>
+      <label>
+        Кромка
+        <input type="number" name="edge" value="40">
+        мм
+      </label>
+    </div>
+    <div>
+      <label>
+        Подгиб
+        <input type="number" name="hem" value="40">
+        мм
+      </label>
+    </div>
+    <div>
+      <label>
+        Изделия превышающие длину заготовки вычислять первыми
+        <input type="checkbox" name="overLengthFirst" value="true">
+      </label>
+    </div>
+  </div>
+  <div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name1" value=""></label>
+      <label>Длина<input type="number" name="length1" value=""></label>
+      <label>Ширина<input type="number" name="height1" value=""></label>
+      <label>Количество<input type="number" name="count1" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name2" value=""></label>
+      <label>Длина<input type="number" name="length2" value=""></label>
+      <label>Ширина<input type="number" name="height2" value=""></label>
+      <label>Количество<input type="number" name="count2" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name3" value=""></label>
+      <label>Длина<input type="number" name="length3" value=""></label>
+      <label>Ширина<input type="number" name="height3" value=""></label>
+      <label>Количество<input type="number" name="count3" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name4" value=""></label>
+      <label>Длина<input type="number" name="length4" value=""></label>
+      <label>Ширина<input type="number" name="height4" value=""></label>
+      <label>Количество<input type="number" name="count4" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name5" value=""></label>
+      <label>Длина<input type="number" name="length5" value=""></label>
+      <label>Ширина<input type="number" name="height5" value=""></label>
+      <label>Количество<input type="number" name="count5" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name6" value=""></label>
+      <label>Длина<input type="number" name="length6" value=""></label>
+      <label>Ширина<input type="number" name="height6" value=""></label>
+      <label>Количество<input type="number" name="count6" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name7" value=""></label>
+      <label>Длина<input type="number" name="length7" value=""></label>
+      <label>Ширина<input type="number" name="height7" value=""></label>
+      <label>Количество<input type="number" name="count7" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name8" value=""></label>
+      <label>Длина<input type="number" name="length8" value=""></label>
+      <label>Ширина<input type="number" name="height8" value=""></label>
+      <label>Количество<input type="number" name="count8" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name9" value=""></label>
+      <label>Длина<input type="number" name="length9" value=""></label>
+      <label>Ширина<input type="number" name="height9" value=""></label>
+      <label>Количество<input type="number" name="count9" value=""></label>
+    </div>
+    <div>
+      <label>Имя(не обязательно)<input type="text" name="name10" value=""></label>
+      <label>Длина<input type="number" name="length10" value=""></label>
+      <label>Ширина<input type="number" name="height10" value=""></label>
+      <label>Количество<input type="number" name="count10" value=""></label>
+    </div>
+  </div>
+  <div>
+    <button id="calc">Рассчитать</button>
+  </div>
+
+  <div id="errors" class="errors"></div>
+</form>
+  <div id="graph"></div>
+  <script src="index.js"></script>
+<!--  <script src="index.min.js"></script>-->
+</body>
+</html>
