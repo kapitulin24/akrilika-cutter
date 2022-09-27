@@ -44,7 +44,10 @@ export const fnc = {
 
     //заполянеям массив прямоугольниками
     plate.forEach(rect => {
-      fillRect(rect.x, rect.w, rect.y, rect.h + this.c.config.edge + this.c.config.hem, 1)
+      let addY = this.c.config.edge + this.c.config.hem, addX = 0
+       if (rect.rotate) [addX, addY] = [addY, addX]
+
+      fillRect(rect.x, rect.w + addX, rect.y, rect.h + addY, 1)
     })
 
     //ищем не занятое пространство

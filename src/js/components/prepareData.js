@@ -19,7 +19,7 @@ export function prepareData(p) {
     for (let part = 1; part <= rect.count; part++) {
       const name = rect.name
         ? `${p.config.nameIsPrefix ? p.config.name : ''}${rect.name} ${part}`
-        : `${p.config.name} ${i}-${part}`
+        : `${p.config.name} ${i + 1}-${part}`
 
       p.parts.push({name, w: rect.length, h: rect.height})
     }

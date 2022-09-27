@@ -71,7 +71,7 @@ const calcOverlength = (p) => {
 
 export function calculate(p) {
   let countIteration = 0, currentPlate = 0
-  const {length, step, overLengthFirst, edge, hem} = p.config,
+  const {length, step, overLengthFirst, edge, hem, rotate} = p.config,
     sizeStep = length * step //кратность листа в линейном выражении
 
   fnc.bindContext(p)
@@ -99,15 +99,18 @@ export function calculate(p) {
       found: for (let unused = 0; unused < p.unusedRect.length; unused++) {
         const currUnused = p.unusedRect[unused]
         for (let rect = 0; rect < p.parts.length; rect++) {
-          const curRect = p.parts[rect]
-          if (curRect.w <= currUnused.w && curRect.h + edge + hem <= currUnused.h) { //если найдено
-            const obj = {
-              name: curRect.name,
-              x: currUnused.x,
-              y: currUnused.y,
-              w: curRect.w,
-              h: curRect.h
+          const curRect = p.parts[rect],
+                isHorizontal = curRect.w <= currUnused.w && curRect.h + edge + hem <= currUnused.h,
+                isVertical = curRect.w <= currUnused.h && curRect.h + edge + hem <= currUnused.w
+
+          if (isHorizontal || isVertical) { //если найдено
+            const obj = {name: curRect.name, x: currUnused.x, y: currUnused.y, w: curRect.w, h: curRect.h}
+
+            if (rotate && isVertical) {
+              [obj.w, obj.h] = [obj.h, obj.w]
+              obj.rotate = true
             }
+
             p.plates[currentPlate].push(obj)
             p.parts.splice(rect, 1)
             break found

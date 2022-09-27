@@ -30,6 +30,7 @@ function calc(e) {
   data.parts = parts
   data.overLengthFirst = !!data.overLengthFirst
   data.nameIsPrefix = !!data.nameIsPrefix
+  data.rotate = !!data.rotate
 
   const cut = cutter(data),
     errorsBlock = document.querySelector('#errors')
@@ -62,14 +63,40 @@ function calc(e) {
         ctx.fillRect(e.x, e.y, e.w, e.h)
         ctx.fillStyle = '#000'
         ctx.font = '22px Verdana'
-        ctx.fillText(`${e.name} (${e.w}x${e.h}+${edge}+${hem} мм)`, e.x + 10, e.y + 25)
-        //кромка
-        ctx.fillStyle = 'MediumAquamarine'
-        ctx.fillRect(e.x, e.y + e.h, e.w, edge)
-        //подгиб
-        ctx.fillStyle = 'DarkSeaGreen'
-        ctx.fillRect(e.x, e.y + e.h + edge, e.w, hem)
-        ctx.strokeRect(e.x, e.y, e.w, e.h + edge + hem)
+        if (e.rotate) {
+          ctx.rotate(-Math.PI / 2)
+          ctx.fillText(`${e.name} (${e.w}x${e.h}+${edge}+${hem} мм)`, -e.y - e.h + 10, e.x + 25)
+          ctx.rotate(Math.PI / 2)
+          //кромка
+          ctx.fillStyle = 'MediumAquamarine'
+          ctx.fillRect(e.x + e.w, e.y, edge, e.h)
+          //подгиб
+          ctx.fillStyle = 'DarkSeaGreen'
+          ctx.fillRect(e.x + e.w + edge, e.y, hem, e.h)
+          ctx.strokeRect(e.x, e.y, e.w + edge + hem, e.h)
+        } else {
+          ctx.fillText(`${e.name} (${e.w}x${e.h}+${edge}+${hem} мм)`, e.x + 10, e.y + 25)
+          //кромка
+          ctx.fillStyle = 'MediumAquamarine'
+          ctx.fillRect(e.x, e.y + e.h, e.w, edge)
+          //подгиб
+          ctx.fillStyle = 'DarkSeaGreen'
+          ctx.fillRect(e.x, e.y + e.h + edge, e.w, hem)
+          ctx.strokeRect(e.x, e.y, e.w, e.h + edge + hem)
+        }
+
+        ctx.strokeStyle = 'red'
+        ctx.beginPath();
+        ctx.setLineDash([30, 10]);
+        ctx.moveTo(915, 0);
+        ctx.lineTo(915, 760);
+        ctx.moveTo(1830, 0);
+        ctx.lineTo(1830, 760);
+        ctx.moveTo(2745, 0);
+        ctx.lineTo(2745, 760);
+        ctx.stroke();
+        ctx.strokeStyle = 'black'
+        ctx.setLineDash([]);
       })
 
       div.append(canvas)
