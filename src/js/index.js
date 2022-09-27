@@ -31,6 +31,7 @@ function calc(e) {
   data.overLengthFirst = !!data.overLengthFirst
   data.nameIsPrefix = !!data.nameIsPrefix
   data.rotate = !!data.rotate
+  data.cut = !!data.cut
 
   const cut = cutter(data),
     errorsBlock = document.querySelector('#errors')
@@ -65,7 +66,7 @@ function calc(e) {
         ctx.font = '22px Verdana'
         if (e.rotate) {
           ctx.rotate(-Math.PI / 2)
-          ctx.fillText(`${e.name} (${e.w}x${e.h}+${edge}+${hem} мм)`, -e.y - e.h + 10, e.x + 25)
+          ctx.fillText(`${e.name} (${e.h}x${e.w}+${edge}+${hem} мм)`, -e.y - e.h + 10, e.x + 25)
           ctx.rotate(Math.PI / 2)
           //кромка
           ctx.fillStyle = 'MediumAquamarine'

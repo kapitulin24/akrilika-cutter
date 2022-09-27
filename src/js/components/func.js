@@ -65,8 +65,12 @@ export const fnc = {
     return res
   },
 
-//сортировка по убыванию
+  //сортировка по убыванию
   sort(arr, param = 'w') {
     return arr.sort((a, b) => b[param] - a[param])
   },
+  //случайный id
+  rndID (length = 5) {
+    return Math.random().toString(36).substr(2, length);
+  }
 }

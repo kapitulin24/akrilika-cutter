@@ -60,18 +60,23 @@ const calcOverlength = (p) => {
     }
   }
 
-  p.parts.push(...findParts().map((e, i) => {
+  const parts = findParts()
+
+  p.parts.push(...parts.map((e, i) => {
     return {
+      ...currRect,
       name: `${currRect.name} ${partName} ${i + 1}`,
       w: e,
-      h: currRect.h
+      h: currRect.h,
+      part: i + 1,
+      parts: parts.length
     }
   }))
 }
 
 export function calculate(p) {
   let countIteration = 0, currentPlate = 0
-  const {length, step, overLengthFirst, edge, hem, rotate} = p.config,
+  const {length, step, overLengthFirst, edge, hem, rotate, cut} = p.config,
     sizeStep = length * step //кратность листа в линейном выражении
 
   fnc.bindContext(p)
@@ -104,7 +109,7 @@ export function calculate(p) {
                 isVertical = curRect.w <= currUnused.h && curRect.h + edge + hem <= currUnused.w
 
           if (isHorizontal || isVertical) { //если найдено
-            const obj = {name: curRect.name, x: currUnused.x, y: currUnused.y, w: curRect.w, h: curRect.h}
+            const obj = {...curRect, x: currUnused.x, y: currUnused.y, w: curRect.w, h: curRect.h}
 
             if (rotate && isVertical) {
               [obj.w, obj.h] = [obj.h, obj.w]
@@ -149,6 +154,15 @@ export function calculate(p) {
       fnc.sort(p.parts)
       currentPlate = 0
     }
+
+    //если можно делить изделия и все уже разложено
+    //todo
+    // if (cut && !p.parts.length && !p.overlengths.length) {
+    //   p.plates[p.plates.length - 1][0].w -= 915
+    //   p.overlengths = [{name: 'name 1111', w: 915, h: 100}]
+    //   calcOverlength(p)
+    //   currentPlate = 0
+    // }
 
     if (++countIteration > p.maxIteration) {
       console.warn(`calculation aborted (iteration > ${p.maxIteration})`)

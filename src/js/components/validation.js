@@ -30,6 +30,9 @@ export function validation(p) {
   if (p.config.rotate !== true && p.config.rotate !== false) {
     p.errors.push(`rotate is not bool`)
   }
+  if (p.config.cut !== true && p.config.cut !== false) {
+    p.errors.push(`cut is not bool`)
+  }
   if (p.config.parts.filter(e => (
       !e.length || !e.height || !e.count ||
       !Number.isInteger(e.length) || !Number.isInteger(e.height) || !Number.isInteger(e.count) ||

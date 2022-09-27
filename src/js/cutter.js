@@ -13,6 +13,7 @@ export function cutter(param) {
       nameIsPrefix: false,
       overLengthFirst: false,
       rotate: false,
+      cut: false,
       parts: [], //{name: '', length: 12, height: 500, count: 1} name - опционально
       length: 3660,
       height: 760,

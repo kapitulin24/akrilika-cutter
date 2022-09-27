@@ -21,7 +21,7 @@ export function prepareData(p) {
         ? `${p.config.nameIsPrefix ? p.config.name : ''}${rect.name} ${part}`
         : `${p.config.name} ${i + 1}-${part}`
 
-      p.parts.push({name, w: rect.length, h: rect.height})
+      p.parts.push({name, w: rect.length, h: rect.height, id: fnc.rndID(), part: 1, parts: 1})
     }
   })
 
@@ -31,7 +31,7 @@ export function prepareData(p) {
   //отделяем отрезки больше длины заготовки
   for (let part = 0; part < p.parts.length; part++) {
     if (p.parts[part].w > p.config.length) {
-      p.overlengths.push({name: p.parts[part].name, w: p.parts[part].w, h: p.parts[part].h})
+      p.overlengths.push(p.parts[part])
       p.parts.splice(part, 1)
       part--
     }
