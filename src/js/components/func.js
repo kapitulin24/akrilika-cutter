@@ -26,7 +26,7 @@ export const fnc = {
         if (arr[y][startX] === 1) break
         h++
       }
-      for (let y = startY - 1; y > 0; y--) {
+      for (let y = startY - 1; y >= 0; y--) {
         if (arr[y][startX] === 1) break
         topY++
         h++

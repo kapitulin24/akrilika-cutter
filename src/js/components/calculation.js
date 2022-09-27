@@ -108,7 +108,7 @@ export function calculate(p) {
                 isHorizontal = curRect.w <= currUnused.w && curRect.h + edge + hem <= currUnused.h,
                 isVertical = curRect.w <= currUnused.h && curRect.h + edge + hem <= currUnused.w
 
-          if (isHorizontal || isVertical) { //если найдено
+          if (isHorizontal || (rotate && isVertical)) { //если найдено
             const obj = {...curRect, x: currUnused.x, y: currUnused.y, w: curRect.w, h: curRect.h}
 
             if (rotate && isVertical) {
