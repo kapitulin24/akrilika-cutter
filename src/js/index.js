@@ -15,12 +15,13 @@ function calc(e) {
     data[i[0]] = !isNaN(i[1]) && i[1] !== '' ? +i[1] : i[1]
   }
 
-  for (let i = 1; i <= 6; i++) {
+  for (let i = 1; i <= 10; i++) {
     if (data[`length${i}`] === '' || data[`height${i}`] === '' || data[`count${i}`] === '') continue
     const obj = {
       length: data[`length${i}`],
       height: data[`height${i}`],
-      count: data[`count${i}`]
+      count: data[`count${i}`],
+      color: data[`color${i}`]
     }
 
     if (data[`name${i}`] !== '') obj.name = data[`name${i}`]
@@ -60,7 +61,7 @@ function calc(e) {
 
       ctx.strokeRect(0, 0, canvas.width, canvas.height)
       item.forEach(e => {
-        ctx.fillStyle = 'LightSeaGreen'
+        ctx.fillStyle = e.color || 'LightSeaGreen'
         ctx.fillRect(e.x, e.y, e.w, e.h)
         ctx.fillStyle = '#000'
         ctx.font = '22px Verdana'

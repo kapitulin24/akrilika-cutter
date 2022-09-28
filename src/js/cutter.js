@@ -27,10 +27,13 @@ export function cutter(param) {
     parts: [],
     partsSorted: [],
     unusedRect: [],
-    overlengths: [],
+    forDivide: [],
     plates: [[]], //начинаем с одного листа (массив внутри)
     errors: [],
-    maxIteration: 1000 //максимальное количество итераций в цикле while
+    isChanged: [false], //вносились ли изменения на лист в текущей итерации
+    isChangedDivide: [], //изменения на предыдущей итерации при делении изделий
+    divideParam: {},
+    maxIteration: 100 //максимальное количество итераций в цикле while
   }
   //endregion inputData
 

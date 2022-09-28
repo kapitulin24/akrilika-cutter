@@ -12,7 +12,7 @@ export function prepareData(p) {
   p.config.hem = +p.config.hem
   p.config.minPart = +p.config.minPart
   p.config.maxStack = +p.config.maxStack
-  p.config.parts = p.config.parts.map(e => ({name: e.name, length: +e.length, height: +e.height, count: +e.count}))
+  p.config.parts = p.config.parts.map(e => ({...e, name: e.name, length: +e.length, height: +e.height, count: +e.count}))
 
   //раскукоживаем
   p.config.parts.forEach((rect, i) => {
@@ -21,7 +21,7 @@ export function prepareData(p) {
         ? `${p.config.nameIsPrefix ? p.config.name : ''}${rect.name} ${part}`
         : `${p.config.name} ${i + 1}-${part}`
 
-      p.parts.push({name, w: rect.length, h: rect.height, id: fnc.rndID(), part: 1, parts: 1})
+      p.parts.push({...rect, name, w: rect.length, h: rect.height, id: fnc.rndID(), part: 1, parts: 1})
     }
   })
 
@@ -31,7 +31,7 @@ export function prepareData(p) {
   //отделяем отрезки больше длины заготовки
   for (let part = 0; part < p.parts.length; part++) {
     if (p.parts[part].w > p.config.length) {
-      p.overlengths.push(p.parts[part])
+      p.forDivide.push(p.parts[part])
       p.parts.splice(part, 1)
       part--
     }
