@@ -1,26 +1,24 @@
 import {fnc} from './func'
 
 export function calculate(p) {
+  const {length, overLengthFirst, edge, hem, rotate, cut} = p.config
+
   let countIteration = 0, currentPlate = 0
-  const {length, step, overLengthFirst, edge, hem, rotate, cut} = p.config,
-    sizeStep = length * step //кратность листа в линейном выражении
 
   fnc.bindContext(p)
+
+  //создаем новый лист
+  fnc.createNewPlate()
 
   while (p.parts.length || p.forDivide.length) {
     //на всех листах флаг "не изменялся"
     p.isChanged = p.isChanged.map(() => false)
-    //найти неиспользуемые пространства
-    p.unusedRect = fnc.findUnusedRect(p.plates[currentPlate])
-
-    //сортировка от максимальной до минимальной ширины
-    fnc.sort(p.unusedRect)
 
     //текущая используемая длина на листе
-    const currLength = Math.floor(p.unusedRect[p.unusedRect.length - 1].w / sizeStep) * sizeStep
+    const currLength = fnc.getCurrentLength(p.unusedRect[currentPlate][p.unusedRect[currentPlate].length - 1].w)
 
     //если превысили кратность то начинаем с самого маленького
-    if (currLength === length) p.unusedRect.reverse()
+    if (currLength === length) p.unusedRect[currentPlate].reverse()
 
     //если сразу вычисляем изделия превышающие длину заготовки,
     //то перемещаем изделия не превышающие длину заготовки во временное хранилище
@@ -29,8 +27,8 @@ export function calculate(p) {
       p.temporaryStorage = p.parts
       p.parts = []
     } else {
-      found: for (let unused = 0; unused < p.unusedRect.length; unused++) {
-        const currUnused = p.unusedRect[unused]
+      found: for (let unused = 0; unused < p.unusedRect[currentPlate].length; unused++) {
+        const currUnused = p.unusedRect[currentPlate][unused]
         for (let rect = 0; rect < p.parts.length; rect++) {
           const curRect = p.parts[rect],
                 isHorizontal = curRect.w <= currUnused.w && curRect.h + edge + hem <= currUnused.h,
@@ -47,15 +45,22 @@ export function calculate(p) {
             p.plates[currentPlate].push(obj)
             p.isChanged[currentPlate] = true
             p.parts.splice(rect, 1)
+            //обновляем неиспользуемые пространства
+            fnc.findUnusedRect(currentPlate)
+            //сортировка от максимальной до минимальной ширины
+            fnc.sort(p.unusedRect[currentPlate])
             break found
           }
         }
 
         //если ничего не найдено, то создаем новый лист если находимся на последнем
         //и только если текущий лист уже был использован
-        if (unused === p.unusedRect.length - 1 && p.plates[currentPlate].length) {
-          currentPlate === p.plates.length - 1 && fnc.createNewPlate()
-          currentPlate++
+        if (unused === p.unusedRect[currentPlate].length - 1 && p.plates[currentPlate].length) {
+          let isCreated = true
+          if (currentPlate === p.plates.length - 1) {
+            isCreated = fnc.createNewPlate()
+          }
+          isCreated  && currentPlate++
         }
       }
 
@@ -84,18 +89,20 @@ export function calculate(p) {
     if (cut && !p.parts.length && !p.forDivide.length) {
       // первый вход или предыдущее разделенное было разложено по листам кроме последнего
       if (!fnc.compareArr(p.isChangedDivide, p.isChanged, true)) {
-        //удаляем лист если освободили его полностью
-        p.plates[p.plates.length - 1].length || fnc.deleteLastPlate(true)
-        p.isChangedDivide = p.isChanged
+        p.isChangedDivide = [...p.isChanged]
         const parts = fnc.selectItemsOfLastParts()
         if (parts.items) {
           p.forDivide = parts.items
-          p.divideParam = {
-            lastPlateLength: length - (sizeStep * parts.emptyParts),
-            queue: true
-          }
+          p.divideParam = {queue: true}
+          p.platesLength[p.platesLength.length - 1] = length - (p.sizeStep * parts.emptyParts)
+          fnc.findUnusedRect(currentPlate)
+          //сортировка от максимальной до минимальной ширины
+          fnc.sort(p.unusedRect[currentPlate])
           currentPlate = 0
         }
+
+        //удаляем лист если освободили его полностью
+        p.plates[p.plates.length - 1].length || fnc.deleteLastPlate(true)
       }
     }
 

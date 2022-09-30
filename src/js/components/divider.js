@@ -1,8 +1,8 @@
 import {fnc} from './func'
 
-const divider = (p, param = {}) => {
+const divider = (p) => {
   const {length, step, minPart, edge, hem, maxStack, partName, rotate} = p.config
-  let {lastPlateLength: lastPlateLength = length} = param, ms = maxStack
+  let ms = maxStack, parts
 
   //рекурсивный поиск оптимальных частей на которые можно разделить изделие
   const findParts = (startSumm = 0) => {
@@ -11,19 +11,19 @@ const divider = (p, param = {}) => {
 
     startSumm % length && res.push(startSumm % length)
 
-    if (res.length < ms + 1) {
-      for (let i = 0; i < p.unusedRect.length - 1; i++) {
+    if (res.length < ms) {
+      for (let i = 0; i < p.unusedRectAll.length - 1; i++) {
 
         //если следующий элемент ближе к нужному размеру переходим к нему
-        if (summ + p.unusedRect[i + 1].w > currRect.w) {
+        if (summ + p.unusedRectAll[i + 1].w > currRect.w) {
           continue
         } else {
-          summ += p.unusedRect[i].w
-          res.push(p.unusedRect[i].w)
+          summ += p.unusedRectAll[i].w
+          res.push(p.unusedRectAll[i].w)
         }
 
         //прерываем если нашли сумму или превысили максимально количество стыков
-        if (summ >= currRect.w || res.length === ms + 1) break
+        if (summ >= currRect.w || res.length === ms) break
       }
     }
 
@@ -47,7 +47,11 @@ const divider = (p, param = {}) => {
   //первый элемент тот что больше заготовки, он всегда самый длинный
   const currRect = p.forDivide[0]
 
-  ms = maxStack + 1 - currRect.parts
+  /*валидация сразу предусматривает что тут не будут заготовки которые невозможно разделить
+    на нужное количество стыков, поэтому можно сразу удалить*/
+  p.forDivide.splice(0, 1)
+
+  ms = maxStack + 2 - currRect.parts
 
   //повернутый элемент поворачиваем обратно
   if (currRect && currRect.rotate) {
@@ -55,34 +59,31 @@ const divider = (p, param = {}) => {
     [currRect.w, currRect.h] = [currRect.h, currRect.w]
   }
 
-  //валидация сразу предусматривает что тут не будут заготовки которые невозможно разделить
-  //на нужное количество стыков, поэтому можно сразу удалить
-  p.forDivide.splice(0, 1)
-
   //ищем свободные простанства
-  p.unusedRect = []
-  p.plates.forEach((plate, i) => {
-    let l = length
-    if (i === p.plates.length - 1) l = lastPlateLength
-
-    for (let i of fnc.findUnusedRect(plate, l)) {
-      if (i.h >= currRect.h + edge + hem && i.w >= minPart) {
-        p.unusedRect.push(i)
-      } else if (rotate && i.w >= currRect.h + edge + hem && i.h >= minPart) {
-        [i.w, i.h] = [i.h, i.w];
-        p.unusedRect.push({...i, rotate: true})
+  p.unusedRectAll = []
+  p.unusedRect.forEach(plate => {
+    plate.forEach(rect => {
+      if (rect.h >= currRect.h + edge + hem && rect.w >= minPart) {
+        p.unusedRectAll.push(rect)
+      } else if (rotate && rect.w >= currRect.h + edge + hem && rect.h >= minPart) {
+        [rect.w, rect.h] = [rect.h, rect.w];
+        p.unusedRectAll.push({...rect, rotate: true})
       }
-    }
+    })
   })
 
   //todo посчитать сколько можно раз делить и исправить и таких же part и parts
+  //todo разобраться с расположением есть 1 ошибка
+  //todo исправить пересечение прямоугольников(свободных)
+  //todo все настройки листов в листы
 
   //сортируем по убыванию длины
-  fnc.sort(p.unusedRect)
+  fnc.sort(p.unusedRectAll)
   //фейковый последний элемент
-  p.unusedRect.push({w: 0})
+  p.unusedRectAll.push({w: 0})
 
-  const parts = findParts()
+  parts = findParts()
+  p.unusedRectAll = null
 
   p.parts.push(...parts.map((e, i) => {
     return {

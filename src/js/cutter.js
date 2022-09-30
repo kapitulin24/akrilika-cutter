@@ -27,10 +27,12 @@ export function cutter(param) {
     parts: [],
     partsSorted: [],
     unusedRect: [],
+    unusedRectAll: null,
     forDivide: [],
-    plates: [[]], //начинаем с одного листа (массив внутри)
+    plates: [],
+    platesLength: [],
     errors: [],
-    isChanged: [false], //вносились ли изменения на лист в текущей итерации
+    isChanged: [], //вносились ли изменения на лист в текущей итерации
     isChangedDivide: [], //изменения на предыдущей итерации при делении изделий
     divideParam: {},
     maxIteration: 100 //максимальное количество итераций в цикле while
@@ -42,6 +44,7 @@ export function cutter(param) {
 
   prepareData(data)
 
+  data.sizeStep = data.config.length * data.config.step //кратность листа в линейном выражении
   //вычисление
   calculate(data)
 

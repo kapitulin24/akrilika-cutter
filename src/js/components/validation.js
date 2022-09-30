@@ -18,7 +18,8 @@ export function validation(p) {
   if (notValidElements.length) {
     p.errors.push(`Elements: ${JSON.stringify(notValidElements)} is not valid`)
   }
-  if (Number.isNaN(p.config.step) || p.config.step <= 0 || p.config.step > 0.5) {
+  const steps = [0.1, 0.2, 0.25, 0.5]
+  if (Number.isNaN(p.config.step) || !steps.find(e => e === p.config.step)) {
     p.errors.push(`Step error`)
   }
   if (p.config.nameIsPrefix !== true && p.config.nameIsPrefix !== false) {

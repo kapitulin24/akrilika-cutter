@@ -6,22 +6,51 @@ export const fnc = {
   },
   //создать новый лист
   createNewPlate() {
-    this.c.plates.push([])
-    this.c.isChanged.push(false)
+    let lastPlate = this.c.platesLength.length - 1, isCreated, newLength
+    const length = this.c.config.length,
+          lastLength = this.c.platesLength[lastPlate] || length
+
+    //если длина последнего листа равна общей длине листа, то создаем новый лист
+    if (lastLength === length) {
+      this.c.plates.push([])
+      this.c.isChanged.push(false)
+      this.c.platesLength.push(length)
+      isCreated = true
+    } else { //иначе добавляем к длине листа кратными частями
+      newLength = this.getCurrentLength(lastLength, 'ceil')
+
+      if (newLength === lastLength && newLength < length) {
+        newLength = this.getCurrentLength(lastLength + 1, 'ceil')
+      }
+
+      this.c.platesLength[lastPlate] = newLength
+      isCreated = false
+    }
+    this.c.unusedRect[this.c.plates.length - 1] = this.findUnusedRect(this.c.plates.length - 1)
+
+    return isCreated
+  },
+
+  getCurrentLength(length, mode = 'floor') {
+    const modes = ['round', 'ceil', 'floor']
+    if (!modes.find(e => e === mode)) throw new Error('mode is error')
+
+    return  Math[mode](length / this.c.sizeStep) * this.c.sizeStep
   },
 
   //удалить последний лист
   deleteLastPlate(dividers = false) {
     this.c.plates.splice(-1)
     this.c.isChanged.splice(-1)
+    this.c.platesLength.splice(-1)
+    this.c.unusedRect.splice(-1)
     dividers && this.c.isChangedDivide.splice(-1)
   },
 
   //сравнить массивы
-  compareArr(arr1, arr2, notLast = false) {
+  compareArr(arr1, arr2) {
     if (arr1.length !== arr2.length) return false
 
-    //if (notLast && arr2[arr2.length -1] === true) return true
     for (let i in arr1) {
       if (arr1[i] !== arr2[i]) return false
     }
@@ -32,16 +61,15 @@ export const fnc = {
   allItemsDivide(iteration, param = {}) {
     if (param.queue) iteration = 1
     for (let item = 0; item < iteration; item++) {
-      divider(this.c, param)
+      divider(this.c)
     }
   },
 
   //выделить из последнего листа элменты из его части
   selectItemsOfLastParts(plate = this.c.plates.length - 1) {
-    const s = this.c.config.step * this.c.config.length
     let res = [], emptyParts = 0
 
-    for (let step = this.c.config.length - s; step >= 0; step -= s) {
+    for (let step = this.c.config.length - this.c.sizeStep; step >= 0; step -= this.c.sizeStep) {
       for (let item = 0; item < this.c.plates[plate].length; item++) {
         const el = this.c.plates[plate][item]
         if (el.x + el.w > step) {
@@ -58,8 +86,9 @@ export const fnc = {
   },
 
 //поиск неиспользованного пространства
-  findUnusedRect(plate, length = this.c.config.length, height = this.c.config.height) {
-    let arr = Array.from(Array(height), () => new Array(length).fill(0)),
+  findUnusedRect(index) {
+    let length = this.c.platesLength[index]
+    let arr = Array.from(Array(this.c.config.height), () => new Array(length).fill(0)),
       res = []
 
     const fillRect = (startX, endX, startY, endY, value) => {
@@ -72,7 +101,7 @@ export const fnc = {
 
     const findEndY = (startX, startY) => {
       let h = 0, topY = 0
-      for (let y = startY; y < height; y++) {
+      for (let y = startY; y < this.c.config.height; y++) {
         if (arr[y][startX] === 1) break
         h++
       }
@@ -93,7 +122,7 @@ export const fnc = {
     }
 
     //заполянеям массив прямоугольниками
-    plate.forEach(rect => {
+    this.c.plates[index].forEach(rect => {
       let addY = this.c.config.edge + this.c.config.hem, addX = 0
        if (rect.rotate) [addX, addY] = [addY, addX]
 
@@ -101,7 +130,7 @@ export const fnc = {
     })
 
     //ищем не занятое пространство
-    for (let y = 0; y < height; y++) {
+    for (let y = 0; y < this.c.config.height; y++) {
       for (let x = 0; x < length; x++) {
         if (arr[y][x] !== 1 && arr[y][x] !== 2) {
           const w = findEndX(x, y),
@@ -112,7 +141,8 @@ export const fnc = {
         }
       }
     }
-    return res
+
+    return this.c.unusedRect[index] = res
   },
 
   //сортировка по убыванию
