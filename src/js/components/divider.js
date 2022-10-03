@@ -1,7 +1,7 @@
 import {fnc} from './func'
 
 const divider = (p) => {
-  const {length, step, minPart, edge, hem, maxStack, partName, rotate} = p.config
+  const {length, step, minPart, maxStack, partName, rotate} = p.config
   let ms = maxStack, parts
 
   //рекурсивный поиск оптимальных частей на которые можно разделить изделие
@@ -61,13 +61,14 @@ const divider = (p) => {
 
   //ищем свободные простанства
   p.unusedRectAll = []
-  p.unusedRect.forEach(plate => {
-    plate.forEach(rect => {
-      if (rect.h >= currRect.h + edge + hem && rect.w >= minPart) {
-        p.unusedRectAll.push(rect)
-      } else if (rotate && rect.w >= currRect.h + edge + hem && rect.h >= minPart) {
-        [rect.w, rect.h] = [rect.h, rect.w];
-        p.unusedRectAll.push({...rect, rotate: true})
+  p.plates.forEach((plate, i) => {
+    plate.unusedSpace.forEach(space => {
+      space = {...space, fromPlate: i}
+      if (space.h >= currRect.h + p.eh && space.w >= minPart) {
+        p.unusedRectAll.push(space)
+      } else if (rotate && space.w >= currRect.h + p.eh && space.h >= minPart) {
+        [space.w, space.h] = [space.h, space.w];
+        p.unusedRectAll.push({...space, rotate: true})
       }
     })
   })

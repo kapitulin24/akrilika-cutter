@@ -4,17 +4,26 @@ export const fnc = {
   bindContext(context) {
     this.c = context
   },
+
+  resetCurrentPlate() {
+    this.c._currentIndexPlate = 0
+  },
+
   //создать новый лист
   createNewPlate() {
-    let lastPlate = this.c.platesLength.length - 1, isCreated, newLength
-    const length = this.c.config.length,
-          lastLength = this.c.platesLength[lastPlate] || length
+    const c = this.c
+    let lastPlate = c.plates.length - 1, isCreated, newLength
+    const length = c.config.length, height = c.config.height,
+          lastLength =c.plates[lastPlate]?.length || length
 
     //если длина последнего листа равна общей длине листа, то создаем новый лист
     if (lastLength === length) {
-      this.c.plates.push([])
-      this.c.isChanged.push(false)
-      this.c.platesLength.push(length)
+      const matrix = Array.from(Array(height), () => new Array(length).fill(0)),
+            newPlate = {length, height, items: [], matrix,
+              unusedSpace: [{x: 0, y:0, w: length, h: height}],
+              spaceSymbol: c._startSpaceSymbol, isChanged: false
+            }
+      c.plates.push(newPlate)
       isCreated = true
     } else { //иначе добавляем к длине листа кратными частями
       newLength = this.getCurrentLength(lastLength, 'ceil')
@@ -23,10 +32,11 @@ export const fnc = {
         newLength = this.getCurrentLength(lastLength + 1, 'ceil')
       }
 
-      this.c.platesLength[lastPlate] = newLength
+      const unusedSpace = this.findUnusedSpace(lastPlate)
+
+      c.plates[lastPlate] = {...c.plates[lastPlate], length: newLength, unusedSpace}
       isCreated = false
     }
-    this.c.unusedRect[this.c.plates.length - 1] = this.findUnusedRect(this.c.plates.length - 1)
 
     return isCreated
   },
@@ -41,9 +51,6 @@ export const fnc = {
   //удалить последний лист
   deleteLastPlate(dividers = false) {
     this.c.plates.splice(-1)
-    this.c.isChanged.splice(-1)
-    this.c.platesLength.splice(-1)
-    this.c.unusedRect.splice(-1)
     dividers && this.c.isChangedDivide.splice(-1)
   },
 
@@ -65,16 +72,37 @@ export const fnc = {
     }
   },
 
+  //добавить прямоугольник в матрицу
+  fillRect(startX, endX, startY, endY, param = {}) {
+    const c = this.c,
+          {
+            index: index = c._currentIndexPlate,
+            value: value = 1,
+            space: space = false,
+            rotate: rotate = false
+          } = param
+    let addW = 0, addH = space ? 0 : c.eh
+
+    if (rotate) [addW, addH] = [addH, addW]
+
+    for (let x = startX; x < endX + startX + addW; x++) {
+      for (let y = startY; y < endY + startY + addH; y++) {
+        c.plates[index].matrix[y][x] = value
+      }
+    }
+  },
+
   //выделить из последнего листа элменты из его части
   selectItemsOfLastParts(plate = this.c.plates.length - 1) {
     let res = [], emptyParts = 0
 
     for (let step = this.c.config.length - this.c.sizeStep; step >= 0; step -= this.c.sizeStep) {
-      for (let item = 0; item < this.c.plates[plate].length; item++) {
-        const el = this.c.plates[plate][item]
-        if (el.x + el.w > step) {
-          res.push(el)
-          this.c.plates[plate].splice(item, 1)
+      for (let item = 0; item < this.c.plates[plate].items.length; item++) {
+        const el = this.c.plates[plate].items[item]
+        if (el.x + el.w > step && !el.wasSelected) {
+          res.push({...el, wasSelected: true})
+          this.fillRect(el.x, el.x + el.w, el.y, el.y + el.h, {rotate: el.rotate, value: 0})
+          this.c.plates[plate].items.splice(item, 1)
           item--
         }
       }
@@ -86,18 +114,13 @@ export const fnc = {
   },
 
 //поиск неиспользованного пространства
-  findUnusedRect(index) {
-    let length = this.c.platesLength[index]
-    let arr = Array.from(Array(this.c.config.height), () => new Array(length).fill(0)),
-      res = []
+  findUnusedSpace(index = this.c._currentIndexPlate) {
+    let c = this.c,
+        length = c.plates[index].length, res = [],
+        arr = c.plates[index].matrix,
+        spaceSymbol = c.plates[index].spaceSymbol === c._startSpaceSymbol ? c._alternateSpaceSymbol : c._startSpaceSymbol
 
-    const fillRect = (startX, endX, startY, endY, value) => {
-      for (let x = startX; x < endX + startX; x++) {
-        for (let y = startY; y < endY + startY; y++) {
-          arr[y][x] = value
-        }
-      }
-    }
+    c.plates[index].spaceSymbol = spaceSymbol
 
     const findEndY = (startX, startY) => {
       let h = 0, topY = 0
@@ -121,28 +144,20 @@ export const fnc = {
       return w
     }
 
-    //заполянеям массив прямоугольниками
-    this.c.plates[index].forEach(rect => {
-      let addY = this.c.config.edge + this.c.config.hem, addX = 0
-       if (rect.rotate) [addX, addY] = [addY, addX]
-
-      fillRect(rect.x, rect.w + addX, rect.y, rect.h + addY, 1)
-    })
-
     //ищем не занятое пространство
     for (let y = 0; y < this.c.config.height; y++) {
       for (let x = 0; x < length; x++) {
-        if (arr[y][x] !== 1 && arr[y][x] !== 2) {
+        if (arr[y][x] !== 1 && arr[y][x] !== spaceSymbol) {
           const w = findEndX(x, y),
             {h, y: topY} = findEndY(x, y)
 
-          fillRect(x, w, y - topY, h, 2)
+          this.fillRect(x, w, y - topY, h, {index, value: spaceSymbol, space: true})
           res.push({x, y: y - topY, w, h})
         }
       }
     }
 
-    return this.c.unusedRect[index] = res
+    return this.c.plates[index].unusedSpace = this.sort(res)
   },
 
   //сортировка по убыванию

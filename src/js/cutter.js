@@ -25,17 +25,15 @@ export function cutter(param) {
       ...param
     },
     parts: [],
-    partsSorted: [],
-    unusedRect: [],
-    unusedRectAll: null,
     forDivide: [],
     plates: [],
-    platesLength: [],
     errors: [],
-    isChanged: [], //вносились ли изменения на лист в текущей итерации
     isChangedDivide: [], //изменения на предыдущей итерации при делении изделий
     divideParam: {},
-    maxIteration: 100 //максимальное количество итераций в цикле while
+    _currentIndexPlate: 0,
+    _startSpaceSymbol: 2,
+    _alternateSpaceSymbol: 3,
+    _maxIteration: 100 //максимальное количество итераций в цикле while
   }
   //endregion inputData
 
@@ -45,8 +43,10 @@ export function cutter(param) {
   prepareData(data)
 
   data.sizeStep = data.config.length * data.config.step //кратность листа в линейном выражении
+  data.eh = data.config.edge + data.config.hem
   //вычисление
   calculate(data)
 
+  console.log(data)
   return data
 }
