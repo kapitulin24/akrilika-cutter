@@ -18,7 +18,7 @@ export const fnc = {
 
     //если длина последнего листа равна общей длине листа, то создаем новый лист
     if (lastLength === length) {
-      const matrix = Array.from(Array(height), () => new Array(length).fill(0)),
+      const matrix = Array.from(Array(height), () => new Array(length).fill(this.c._symbols.unusedSpace)),
             newPlate = {length, height, items: [], matrix,
               unusedSpace: [{x: 0, y:0, w: length, h: height}],
               spaceSymbol: c._startSpaceSymbol, isChanged: false
@@ -65,8 +65,7 @@ export const fnc = {
   },
 
   //разделить элементы
-  allItemsDivide(iteration, param = {}) {
-    if (param.queue) iteration = 1
+  allItemsDivide(iteration) {
     for (let item = 0; item < iteration; item++) {
       divider(this.c)
     }
@@ -100,8 +99,13 @@ export const fnc = {
       for (let item = 0; item < this.c.plates[plate].items.length; item++) {
         const el = this.c.plates[plate].items[item]
         if (el.x + el.w > step && !el.wasSelected) {
+          const fillParam = {
+            rotate: el.rotate,
+            value: 0,
+            index: plate
+          }
           res.push({...el, wasSelected: true})
-          this.fillRect(el.x, el.x + el.w, el.y, el.y + el.h, {rotate: el.rotate, value: 0})
+          this.fillRect(el.x, el.x + el.w, el.y, el.y + el.h, fillParam)
           this.c.plates[plate].items.splice(item, 1)
           item--
         }
@@ -114,22 +118,25 @@ export const fnc = {
   },
 
 //поиск неиспользованного пространства
-  findUnusedSpace(index = this.c._currentIndexPlate) {
-    let c = this.c,
-        length = c.plates[index].length, res = [],
-        arr = c.plates[index].matrix,
-        spaceSymbol = c.plates[index].spaceSymbol === c._startSpaceSymbol ? c._alternateSpaceSymbol : c._startSpaceSymbol
+  findUnusedSpace(index = this.c._currentIndexPlate, divideMode = false) {
+    const c = this.c,
+      s = c._symbols
+    let length = c.plates[index].length, res = [],
+      arr = c.plates[index].matrix,
+      spaceSymbol = c.plates[index].spaceSymbol === s.startSpace ? s.alternateSpace : s.startSpace,
+      divideSymbol = divideMode ? s.divide : s.rect
 
     c.plates[index].spaceSymbol = spaceSymbol
 
+    const conditionFind = (x, y) => arr[x][y] === s.rect || arr[x][y] === divideSymbol
     const findEndY = (startX, startY) => {
       let h = 0, topY = 0
-      for (let y = startY; y < this.c.config.height; y++) {
-        if (arr[y][startX] === 1) break
+      for (let y = startY; y < c.config.height; y++) {
+        if (conditionFind(y, startX)) break
         h++
       }
       for (let y = startY - 1; y >= 0; y--) {
-        if (arr[y][startX] === 1) break
+        if (conditionFind(y, startX)) break
         topY++
         h++
       }
@@ -138,26 +145,31 @@ export const fnc = {
     const findEndX = (startX, startY) => {
       let w = 0
       for (let x = startX; x < length; x++) {
-        if (arr[startY][x] === 1) break
+        if (conditionFind(startY, x)) break
         w++
       }
       return w
     }
 
     //ищем не занятое пространство
-    for (let y = 0; y < this.c.config.height; y++) {
+    for (let y = 0; y < c.config.height; y++) {
       for (let x = 0; x < length; x++) {
-        if (arr[y][x] !== 1 && arr[y][x] !== spaceSymbol) {
+        if (arr[y][x] !== s.rect && arr[y][x] !== spaceSymbol && arr[y][x] !== divideSymbol) {
           const w = findEndX(x, y),
-            {h, y: topY} = findEndY(x, y)
+            {h, y: topY} = findEndY(x, y),
+            fillParam = {
+              index,
+              value: spaceSymbol,
+              space: true
+            }
 
-          this.fillRect(x, w, y - topY, h, {index, value: spaceSymbol, space: true})
-          res.push({x, y: y - topY, w, h})
+          this.fillRect(x, w, y - topY, h, fillParam)
+          res.push({x, y: y - topY, w, h, fromPlate: index})
         }
       }
     }
 
-    return this.c.plates[index].unusedSpace = this.sort(res)
+    return divideMode ? res : c.plates[index].unusedSpace = this.sort(res)
   },
 
   //сортировка по убыванию

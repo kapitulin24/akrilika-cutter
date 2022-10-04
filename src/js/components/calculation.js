@@ -79,7 +79,7 @@ export function calculate(p) {
 
       //если вычисляются заготовки больше размера листа первыми, то считаем сразу все
       //иначе по одной сратаемся разбросать по свободным местам
-      fnc.allItemsDivide(overLengthFirst ? p.forDivide.length : 1, p.divideParam)
+      fnc.allItemsDivide(overLengthFirst ? p.forDivide.length : 1)
 
       fnc.sort(p.parts)
       fnc.resetCurrentPlate()
@@ -94,7 +94,6 @@ export function calculate(p) {
         const parts = fnc.selectItemsOfLastParts()
         if (parts.items) {
           p.forDivide = parts.items
-          p.divideParam = {queue: true}
           p.plates[p.plates.length - 1].length = length - (p.sizeStep * parts.emptyParts)
 
           fnc.findUnusedSpace()

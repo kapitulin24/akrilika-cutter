@@ -31,6 +31,13 @@ export function cutter(param) {
     isChangedDivide: [], //изменения на предыдущей итерации при делении изделий
     divideParam: {},
     _currentIndexPlate: 0,
+    _symbols: {
+      unusedSpace: 0,
+      rect: 1,
+      startSpace: 2,
+      alternateSpace: 3,
+      divide: 4
+    },
     _startSpaceSymbol: 2,
     _alternateSpaceSymbol: 3,
     _maxIteration: 100 //максимальное количество итераций в цикле while
