@@ -25,6 +25,8 @@ const divider = (p) => {
       }
       return false
     }))
+    //фейковый последний элемент
+    p.unusedRectAll.push({w: 0})
   }
 
 //рекурсивный поиск оптимальных частей на которые можно разделить изделие
@@ -44,7 +46,7 @@ const divider = (p) => {
             index = current.fromPlate,
             fillParam = {
               rotate: current.rotate,
-              value: p._symbols.forDivide,
+              value: p._symbols.divide,
               index
             }
             let w = current.w - (summ > currRect.w ? summ - currRect.w : 0),
@@ -62,7 +64,7 @@ const divider = (p) => {
           }
           p.unusedRectAll.push(...fnc.findUnusedSpace(index, true))
           filterUnusedAll()
-          i = 0
+          i = -1
         }
 
         //прерываем если нашли сумму или превысили максимально количество стыков
@@ -110,11 +112,6 @@ const divider = (p) => {
   //todo исправить пересечение прямоугольников(свободных)
   //todo все настройки листов в листы
   //todo оптимизировать поиск незянятого пространства
-
-  //сортируем по убыванию длины
-  fnc.sort(p.unusedRectAll)
-  //фейковый последний элемент
-  p.unusedRectAll.push({w: 0})
 
   parts = findParts()
   p.unusedRectAll = null

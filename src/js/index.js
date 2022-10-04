@@ -39,8 +39,8 @@ function calc(e) {
 
   errorsBlock.innerHTML = ''
 
-  if (cut.errors.length) {
-    cut.errors.forEach((e, i) => {
+  if (cut._errors.length) {
+    cut._errors.forEach((e, i) => {
       errorsBlock.innerHTML += `<div>${i}. ${e}</div>`
     })
   } else {
@@ -139,8 +139,35 @@ function drawMatrix(cut) {
 })
 }
 
+function drawUnusedAll(cut) {
+  graph.innerHTML = ''
+  const length = cut.config.length,
+    height = cut.config.height
+
+  for (let item = 0; item < cut.plates.length; item++) {
+    const canvas = document.createElement('canvas'),
+      div = document.createElement('div')
+    div.classList.add('plate')
+
+    canvas.setAttribute('width', `${length}`)
+    canvas.setAttribute('height', `${height}`)
+
+    const ctx = canvas.getContext('2d')
+
+    ctx.strokeRect(0, 0, canvas.width, canvas.height)
+    cut.unusedRectAll.filter(e => e.fromPlate === item).forEach(items => {
+      ctx.fillStyle = 'Aqua'
+      ctx.fillRect(items.x, items.y, items.w, items.h)
+    })
+
+    div.append(canvas)
+    graph.append(div)
+  }
+}
+
 window.draw = draw
 window.drawMatrix = drawMatrix
+window.drawUnusedAll = drawUnusedAll
 
 document.querySelector('#calc').addEventListener('click', e => calc(e))
 

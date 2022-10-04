@@ -27,9 +27,9 @@ export function cutter(param) {
     parts: [],
     forDivide: [],
     plates: [],
-    errors: [],
-    isChangedDivide: [], //изменения на предыдущей итерации при делении изделий
-    divideParam: {},
+    deletedPlate: null,
+    _errors: [],
+    _divideParam: {},
     _currentIndexPlate: 0,
     _symbols: {
       unusedSpace: 0,
@@ -38,18 +38,17 @@ export function cutter(param) {
       alternateSpace: 3,
       divide: 4
     },
-    _startSpaceSymbol: 2,
-    _alternateSpaceSymbol: 3,
     _maxIteration: 100 //максимальное количество итераций в цикле while
   }
   //endregion inputData
 
   validation(data)
-  if (data.errors.length) return data
+  if (data._errors.length) return data
 
   prepareData(data)
 
   data.sizeStep = data.config.length * data.config.step //кратность листа в линейном выражении
+  data.countPart = Math.round(data.config.length / data.sizeStep) //оно всегда будет очень близко к нужному. на всякий случай
   data.eh = data.config.edge + data.config.hem
   //вычисление
   calculate(data)

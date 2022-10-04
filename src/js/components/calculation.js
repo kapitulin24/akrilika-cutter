@@ -12,8 +12,7 @@ export function calculate(p) {
 
   while (p.parts.length || p.forDivide.length) {
     const currentPlate = p.plates[p._currentIndexPlate]
-    //на листе флаг "не изменялся"
-    currentPlate.isChanged = false
+    let isFound = false
 
     //текущая используемая длина на листе
     const currLength = fnc.getCurrentLength(Math.max(...currentPlate.items.map(e => e.x + e.w), 0))
@@ -49,6 +48,8 @@ export function calculate(p) {
             p.parts.splice(rect, 1)
             //обновляем неиспользуемые пространства
             fnc.findUnusedSpace()
+            isFound = true
+            countIteration = 0
             break found
           }
         }
@@ -60,7 +61,7 @@ export function calculate(p) {
           if (p._currentIndexPlate === p.plates.length - 1) {
             isCreated = fnc.createNewPlate()
           }
-          isCreated && p._currentIndexPlate++
+          isCreated && !isFound && p._currentIndexPlate++
         }
       }
 
@@ -79,7 +80,7 @@ export function calculate(p) {
 
       //если вычисляются заготовки больше размера листа первыми, то считаем сразу все
       //иначе по одной сратаемся разбросать по свободным местам
-      fnc.allItemsDivide(overLengthFirst ? p.forDivide.length : 1)
+      fnc.allItemsDivide(overLengthFirst ? p.forDivide.length : 1, p._divideParam)
 
       fnc.sort(p.parts)
       fnc.resetCurrentPlate()
@@ -87,23 +88,22 @@ export function calculate(p) {
 
     //если можно делить изделия и все уже было разложено
     if (cut && !p.parts.length && !p.forDivide.length) {
-      // первый вход или предыдущее разделенное было разложено по листам кроме последнего
-      const isChanged = p.plates.map(e => e.isChanged)
-      if (!fnc.compareArr(p.isChangedDivide, isChanged, true)) {
-        p.isChangedDivide = [...isChanged]
         const parts = fnc.selectItemsOfLastParts()
         if (parts.items) {
+          const last = p.plates[p.plates.length - 1],
+                l = length - (p.sizeStep * parts.emptyParts)
           p.forDivide = parts.items
-          p.plates[p.plates.length - 1].length = length - (p.sizeStep * parts.emptyParts)
-
-          fnc.findUnusedSpace()
+          p._divideParam = {queue: true}
+          if (!l) {
+            fnc.deleteLastPlate()
+          } else {
+            last.length = l
+            last.wasSelectedParts.length = Math.round(last.length / p.sizeStep) + 1
+            fnc.findUnusedSpace(p.plates.length - 1)
+          }
 
           fnc.resetCurrentPlate()
         }
-
-        //удаляем лист если освободили его полностью
-        p.plates[p.plates.length - 1].length || fnc.deleteLastPlate(true)
-      }
     }
 
     if (++countIteration > p._maxIteration) {

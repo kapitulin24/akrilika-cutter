@@ -9,6 +9,12 @@ export const fnc = {
     this.c._currentIndexPlate = 0
   },
 
+  fillWasSelected(value = false, index = this.c.plates.length - 1) {
+    const plate = this.c.plates[index],
+          count = Math.round(plate.length / this.c.sizeStep)
+    plate.wasSelectedParts = new Array(count).fill(value)
+  },
+
   //создать новый лист
   createNewPlate() {
     const c = this.c
@@ -18,12 +24,19 @@ export const fnc = {
 
     //если длина последнего листа равна общей длине листа, то создаем новый лист
     if (lastLength === length) {
-      const matrix = Array.from(Array(height), () => new Array(length).fill(this.c._symbols.unusedSpace)),
-            newPlate = {length, height, items: [], matrix,
-              unusedSpace: [{x: 0, y:0, w: length, h: height}],
-              spaceSymbol: c._startSpaceSymbol, isChanged: false
-            }
-      c.plates.push(newPlate)
+      if (!c.deletedPlate) {
+        const matrix = Array.from(Array(height), () => new Array(length).fill(this.c._symbols.unusedSpace)),
+          newPlate = {length, height, items: [], matrix,
+            unusedSpace: [{x: 0, y:0, w: length, h: height}],
+            spaceSymbol: c._symbols.startSpace
+          }
+        c.plates.push(newPlate)
+        this.fillWasSelected()
+      } else {
+        c.plates.push(c.deletedPlate)
+        c.deletedPlate = null
+      }
+
       isCreated = true
     } else { //иначе добавляем к длине листа кратными частями
       newLength = this.getCurrentLength(lastLength, 'ceil')
@@ -32,9 +45,8 @@ export const fnc = {
         newLength = this.getCurrentLength(lastLength + 1, 'ceil')
       }
 
-      const unusedSpace = this.findUnusedSpace(lastPlate)
-
-      c.plates[lastPlate] = {...c.plates[lastPlate], length: newLength, unusedSpace}
+      c.plates[lastPlate].length = newLength
+      this.findUnusedSpace(lastPlate)
       isCreated = false
     }
 
@@ -49,9 +61,10 @@ export const fnc = {
   },
 
   //удалить последний лист
-  deleteLastPlate(dividers = false) {
-    this.c.plates.splice(-1)
-    dividers && this.c.isChangedDivide.splice(-1)
+  deleteLastPlate() {
+    this.fillWasSelected(true)
+    this.findUnusedSpace(this.c.plates.length - 1)
+    this.c.deletedPlate = this.c.plates.splice(-1)[0]
   },
 
   //сравнить массивы
@@ -65,7 +78,8 @@ export const fnc = {
   },
 
   //разделить элементы
-  allItemsDivide(iteration) {
+  allItemsDivide(iteration, param = {}) {
+    if (param.queue) iteration = 1
     for (let item = 0; item < iteration; item++) {
       divider(this.c)
     }
@@ -94,23 +108,30 @@ export const fnc = {
   //выделить из последнего листа элменты из его части
   selectItemsOfLastParts(plate = this.c.plates.length - 1) {
     let res = [], emptyParts = 0
+    const current = this.c.plates[plate]
 
-    for (let step = this.c.config.length - this.c.sizeStep; step >= 0; step -= this.c.sizeStep) {
-      for (let item = 0; item < this.c.plates[plate].items.length; item++) {
-        const el = this.c.plates[plate].items[item]
-        if (el.x + el.w > step && !el.wasSelected) {
+    cancel: for (let step = this.c.config.length - this.c.sizeStep, num = this.c.countPart - 1; step >= 0; step -= this.c.sizeStep, num--) {
+      for (let item = 0; item < current.items.length; item++) {
+        const el = current.items[item]
+        if (el.x + el.w > step) {
+          if (current.wasSelectedParts.length - 1 >= num && current.wasSelectedParts[num]) {
+            break cancel
+          }
           const fillParam = {
             rotate: el.rotate,
             value: 0,
             index: plate
           }
-          res.push({...el, wasSelected: true})
-          this.fillRect(el.x, el.x + el.w, el.y, el.y + el.h, fillParam)
-          this.c.plates[plate].items.splice(item, 1)
+          res.push({...el})
+          this.fillRect(el.x, el.w, el.y, el.h, fillParam)
+          current.items.splice(item, 1)
           item--
         }
       }
-      if (res.length) break;
+      if (res.length) {
+        current.wasSelectedParts[num] = true
+        break;
+      }
       else emptyParts++
     }
 
