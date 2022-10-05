@@ -11,7 +11,7 @@ export const fnc = {
 
   fillWasSelected(value = false, index = this.c.plates.length - 1) {
     const plate = this.c.plates[index],
-          count = Math.round(plate.length / this.c.sizeStep)
+      count = Math.round(plate.length / this.c.sizeStep)
     plate.wasSelectedParts = new Array(count).fill(value)
   },
 
@@ -38,13 +38,14 @@ export const fnc = {
     const c = this.c
     let lastPlate = c.plates.length - 1, isCreated, newLength
     const length = c.config.length, height = c.config.height,
-          lastLength =c.plates[lastPlate]?.length || length
+      lastLength = c.plates[lastPlate]?.length || length
 
     //если длина последнего листа равна общей длине листа, то создаем новый лист
     if (lastLength === length) {
       const matrix = Array.from(Array(height), () => new Array(length).fill(this.c._symbols.unusedSpace)),
-        newPlate = {length, height, items: [], matrix,
-          unusedSpace: [{x: 0, y:0, w: length, h: height}],
+        newPlate = {
+          length, height, items: [], matrix,
+          unusedSpace: [{x: 0, y: 0, w: length, h: height}],
           spaceSymbol: c._symbols.startSpace
         }
 
@@ -70,7 +71,7 @@ export const fnc = {
     const modes = ['round', 'ceil', 'floor']
     if (!modes.find(e => e === mode)) throw new Error('mode is error')
 
-    return  Math[mode](length / this.c.sizeStep) * this.c.sizeStep
+    return Math[mode](length / this.c.sizeStep) * this.c.sizeStep
   },
 
   //удалить последний лист
@@ -96,21 +97,21 @@ export const fnc = {
   },
 
   //добавить прямоугольник в матрицу
-  fillRect(startX, endX, startY, endY, param = {}) {
+  fillRect(x, w, y, h, param = {}) {
     const c = this.c,
-          {
-            index: index = c._currentIndexPlate,
-            value: value = 1,
-            space: space = false,
-            rotate: rotate = false
-          } = param
+      {
+        index: index = c._currentIndexPlate,
+        value: value = 1,
+        space: space = false,
+        rotate: rotate = false
+      } = param
     let addW = 0, addH = space ? 0 : c.eh
 
-    if (rotate) [addW, addH] = [addH, addW]
+    if (rotate) [addW, addH, w, h] = [addH, addW, h, w]
 
-    for (let x = startX; x < endX + startX + addW; x++) {
-      for (let y = startY; y < endY + startY + addH; y++) {
-        c.plates[index].matrix[y][x] = value
+    for (let x1 = x; x1 < w + x + addW; x1++) {
+      for (let y1 = y; y1 < h + y + addH; y1++) {
+        c.plates[index].matrix[y1][x1] = value
       }
     }
   },
@@ -122,8 +123,9 @@ export const fnc = {
 
     cancel: for (let step = this.c.config.length - this.c.sizeStep, num = this.c.countPart - 1; step >= 0; step -= this.c.sizeStep, num--) {
       for (let item = 0; item < current.items.length; item++) {
-        const el = current.items[item]
-        if (el.x + el.w > step) {
+        const el = current.items[item],
+          w = el.rotate ? el.h : el.w
+        if (el.x + w > step) {
           if (current.wasSelectedParts.length - 1 >= num && current.wasSelectedParts[num]) {
             break cancel
           }
@@ -140,9 +142,8 @@ export const fnc = {
       }
       if (res.length) {
         current.wasSelectedParts[num] = true
-        break;
-      }
-      else emptyParts++
+        break
+      } else emptyParts++
     }
 
     return {items: res.length ? res : false, emptyParts: ++emptyParts}
@@ -173,29 +174,34 @@ export const fnc = {
       }
       return {h, y: topY}
     }
-    const findEndX = (startX, startY) => {
-      let w = 0
+    const findEndX = (startX, startY, topY) => {
+      let w = 0, leftX = 0
       for (let x = startX; x < length; x++) {
-        if (conditionFind(startY, x)) break
+        if (conditionFind(startY, x) || conditionFind(startY - topY, x)) break
         w++
       }
-      return w
+      for (let x = startX - 1; x >= 0; x--) {
+        if (conditionFind(startY, x) || conditionFind(startY - topY, x)) break
+        leftX++
+        w++
+      }
+      return {w, x: leftX}
     }
 
     //ищем не занятое пространство
     for (let y = 0; y < c.config.height; y++) {
       for (let x = 0; x < length; x++) {
         if (arr[y][x] !== s.rect && arr[y][x] !== spaceSymbol && arr[y][x] !== divideSymbol) {
-          const w = findEndX(x, y),
-            {h, y: topY} = findEndY(x, y),
+          const {h, y: topY} = findEndY(x, y),
+            {w, x: leftX} = findEndX(x, y, topY),
             fillParam = {
               index,
               value: spaceSymbol,
               space: true
             }
 
-          this.fillRect(x, w, y - topY, h, fillParam)
-          res.push({x, y: y - topY, w, h, fromPlate: index})
+          this.fillRect(x - leftX, w, y - topY, h, fillParam)
+          res.push({x: x - leftX, y: y - topY, w, h, fromPlate: index})
         }
       }
     }
@@ -208,7 +214,7 @@ export const fnc = {
     return arr.sort((a, b) => b[param] - a[param])
   },
   //случайный id
-  rndID (length = 5) {
-    return Math.random().toString(36).substr(2, length);
+  rndID(length = 5) {
+    return Math.random().toString(36).substr(2, length)
   }
 }

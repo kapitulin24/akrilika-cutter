@@ -1,7 +1,7 @@
 import {fnc} from './func'
 
 export function calculate(p) {
-  const {length, overLengthFirst, rotate, cut} = p.config
+  const {length, rotate, cut} = p.config
 
   let countIteration = 0
 
@@ -23,7 +23,7 @@ export function calculate(p) {
     //если сразу вычисляем изделия превышающие длину заготовки,
     //то перемещаем изделия не превышающие длину заготовки во временное хранилище
     //иначе ничинаем вычисление
-    if (overLengthFirst && p.forDivide.length && !p.temporaryStorage) {
+    if (p.forDivide.length && !p.temporaryStorage) {
       p.temporaryStorage = p.parts
       p.parts = []
     } else {
@@ -35,12 +35,16 @@ export function calculate(p) {
                 isVertical = curRect.w <= currUnused.h && curRect.h + p.eh <= currUnused.w
 
           if (isHorizontal || (rotate && isVertical)) { //если найдено
-            const obj = {...curRect, x: currUnused.x, y: currUnused.y, w: curRect.w, h: curRect.h}
-
-            if (rotate && isVertical && !obj.rotate) {
-              [obj.w, obj.h] = [obj.h, obj.w]
-              obj.rotate = true
+            const obj = {
+              ...curRect,
+              x: currUnused.x,
+              y: currUnused.y,
+              w: curRect.w,
+              h: curRect.h,
+              fromPlate: p._currentIndexPlate
             }
+
+            if (rotate && isVertical && !obj.rotate) obj.rotate = true
 
             currentPlate.items.push(obj)
             currentPlate.isChanged = true //флаг "изменялся"
@@ -73,8 +77,6 @@ export function calculate(p) {
       }
     }
 
-    if (!p.parts.length) fnc.changePartsInfoInPlate()
-
     //если закончились остатки то беремся за те которые превысили длину листа
     /* находим только оптимальное деление только самого первого, удаляем из forDivide и выплёвывыем во внешний цикл */
     if (!p.parts.length && p.forDivide.length) {
@@ -82,7 +84,7 @@ export function calculate(p) {
 
       //если вычисляются заготовки больше размера листа первыми, то считаем сразу все
       //иначе по одной сратаемся разбросать по свободным местам
-      fnc.allItemsDivide(overLengthFirst ? p.forDivide.length : 1)
+      fnc.allItemsDivide(p.forDivide.length)
 
       fnc.sort(p.parts)
       fnc.resetCurrentPlate()
@@ -107,11 +109,15 @@ export function calculate(p) {
         for (let i of Object.keys(uniqItems)) {
           if (p.parts.filter(e => e.id === i).length < uniqItems[i] * 2) {
             last.items.push(...parts.items)
-            p.parts = []
             last.length += p.sizeStep
             break;
           }
         }
+    //todo продолжить тут
+        p.parts.forEach(part => {
+          p.plates[part.fromPlate].items.push(part)
+        })
+        p.parts = []
         last.length || fnc.deleteLastPlate()
         fnc.resetCurrentPlate()
       }

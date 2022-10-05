@@ -19,21 +19,18 @@ export function prepareData(p) {
     for (let part = 1; part <= rect.count; part++) {
       const name = rect.name
         ? `${p.config.nameIsPrefix ? p.config.name : ''}${rect.name} ${part}`
-        : `${p.config.name} ${i + 1}-${part}`
+        : `${p.config.name} ${i + 1}-${part}`,
+        id = fnc.rndID(),
+        parts = Math.ceil(rect.length / (p.config.length)),
+        w = rect.length % p.config.length,
+        h = rect.height
 
-      p.parts.push({...rect, name, w: rect.length, h: rect.height, id: fnc.rndID(), part: 1, parts: 1})
+      for (let i = 0, part = 1; i <= rect.length; i += p.config.length, part++) {
+        p.parts.push({...rect, name, w: part === 1 ? w : p.config.length, h, id, part, parts})
+      }
     }
   })
 
   //сортировка раскукоженного по убыванию ширины
   fnc.sort(p.parts)
-
-  //отделяем отрезки больше длины заготовки
-  for (let part = 0; part < p.parts.length; part++) {
-    if (p.parts[part].w > p.config.length) {
-      p.forDivide.push(p.parts[part])
-      p.parts.splice(part, 1)
-      part--
-    }
-  }
 }

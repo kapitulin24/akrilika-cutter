@@ -1,7 +1,7 @@
 import {fnc} from './func'
 
 const divider = (p) => {
-  const {length, step, minPart, maxStack, rotate} = p.config
+  const {minPart, maxStack, rotate} = p.config
   let maxPart, parts, part = 0
 
   //ищем свободные простанства
@@ -28,11 +28,9 @@ const divider = (p) => {
   }
 
 //рекурсивный поиск оптимальных частей на которые можно разделить изделие
-  const findParts = (startSumm = 0) => {
-    let summ = startSumm,
-      res = new Array(Math.trunc(startSumm / length)).fill(length)
-
-    startSumm % length && res.push(startSumm % length)
+  const findParts = () => {
+    let summ = 0,
+      res = []
 
     if (res.length < maxPart) {
       for (let i = 0; i < p.unusedRectAll.length - 1; i++) {
@@ -47,13 +45,15 @@ const divider = (p) => {
               value: p._symbols.divide,
               index
             }
-            let w = current.w - (summ > currRect.w ? summ - currRect.w : 0),
-                h = currRect.h
 
-            if (current.rotate) [w, h] = [h, w]
           summ += current.w
-          res.push(current.w)
+
+          let w = current.w - (summ > currRect.w ? summ - currRect.w : 0),
+              h = currRect.h
+
+          res.push({w, h, fromPlate: current.fromPlate})
           fnc.fillRect(current.x, w, current.y, h, fillParam)
+
           for (let i = 0; i < p.unusedRectAll.length; i++) {
             if (p.unusedRectAll[i].fromPlate === index) {
               p.unusedRectAll.splice(i, 1)
@@ -70,21 +70,10 @@ const divider = (p) => {
       }
     }
 
-    //если не нашли нужную сумму запускам функцию с новыми параметрами
-    if (summ < currRect.w)
-      return findParts(startSumm + (length * step))
-    else {
-      //находим истинный размер
-      res[res.length - 1] -= summ - currRect.w
+    //если не нашли нужную сумму возвращаем входной элемент
+    if (summ < currRect.w) return [currRect]
 
-      //проверка на условие минимального отрезка
-      //в случае когда в массиве 1 элемент условие не выполнится, валидация не пропустит
-      if (res[res.length - 1] < minPart) {
-        res[res.length - 2] -= minPart - res[res.length - 1]
-        res[res.length - 1] = minPart
-      }
-      return res
-    }
+    return res
   }
 
   //первый элемент тот что больше заготовки, он всегда самый длинный
@@ -97,10 +86,7 @@ const divider = (p) => {
     maxPart = maxStack + 2 - currRect.parts
 
     //повернутый элемент поворачиваем обратно
-    if (currRect && currRect.rotate) {
-      currRect.rotate = false;
-      [currRect.w, currRect.h] = [currRect.h, currRect.w]
-    }
+    if (currRect && currRect.rotate) currRect.rotate = false;
 
     findUnusedAll()
     filterUnusedAll()
@@ -108,7 +94,7 @@ const divider = (p) => {
     parts = findParts()
     p.unusedRectAll = null
   } else {
-    parts = [currRect.w]
+    parts = [{...currRect}]
     part = currRect.part
   }
 
@@ -117,9 +103,7 @@ const divider = (p) => {
   p.parts.push(...parts.map((e, i) => {
     return {
       ...currRect,
-      name: currRect.name,
-      w: e,
-      h: currRect.h,
+      ...e,
       part: part || i + 1,
       parts: currParts
     }
@@ -139,4 +123,4 @@ const divider = (p) => {
 export {divider}
 
 //todo посчитать сколько можно раз делить и исправить и таких же part и parts
-//todo оптимизировать поиск незянятого пространства
+//todo оптимизировать поиск незянятого пространства + увеличить шаг

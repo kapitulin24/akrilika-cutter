@@ -25,9 +25,6 @@ export function validation(p) {
   if (p.config.nameIsPrefix !== true && p.config.nameIsPrefix !== false) {
     p._errors.push(`nameIsPrefix is not bool`)
   }
-  if (p.config.overLengthFirst !== true && p.config.overLengthFirst !== false) {
-    p._errors.push(`overLengthFirst is not bool`)
-  }
   if (p.config.rotate !== true && p.config.rotate !== false) {
     p._errors.push(`rotate is not bool`)
   }

@@ -67,30 +67,32 @@ function draw(cut, mode = 'items') {
 
     ctx.strokeRect(0, 0, canvas.width, canvas.height)
     items[mode].forEach(e => {
+      let w = e.w, h = e.h
+      if (e.rotate) [w, h] = [h, w]
       ctx.fillStyle = e.color || 'LightSeaGreen'
-      ctx.fillRect(e.x, e.y, e.w, e.h)
+      ctx.fillRect(e.x, e.y, w, h)
       ctx.fillStyle = '#000'
       ctx.font = '22px Verdana'
       if (e.rotate) {
         ctx.rotate(-Math.PI / 2)
-        ctx.fillText(`${e.name} (${e.h}x${e.w}+${edge}+${hem} мм)`, -e.y - e.h + 10, e.x + 25)
+        ctx.fillText(`${e.name} (${h}x${w}+${edge}+${hem} мм)`, -e.y - h + 10, e.x + 25)
         ctx.rotate(Math.PI / 2)
         //кромка
         ctx.fillStyle = 'MediumAquamarine'
-        ctx.fillRect(e.x + e.w, e.y, edge, e.h)
+        ctx.fillRect(e.x + w, e.y, edge, h)
         //подгиб
         ctx.fillStyle = 'DarkSeaGreen'
-        ctx.fillRect(e.x + e.w + edge, e.y, hem, e.h)
-        ctx.strokeRect(e.x, e.y, e.w + edge + hem, e.h)
+        ctx.fillRect(e.x + w + edge, e.y, hem, h)
+        ctx.strokeRect(e.x, e.y, w + edge + hem, h)
       } else if (mode === 'items') {
-        ctx.fillText(`${e.name} (${e.w}x${e.h}+${edge}+${hem} мм)`, e.x + 10, e.y + 25)
+        ctx.fillText(`${e.name} (${w}x${h}+${edge}+${hem} мм)`, e.x + 10, e.y + 25)
         //кромка
         ctx.fillStyle = 'MediumAquamarine'
-        ctx.fillRect(e.x, e.y + e.h, e.w, edge)
+        ctx.fillRect(e.x, e.y + h, w, edge)
         //подгиб
         ctx.fillStyle = 'DarkSeaGreen'
-        ctx.fillRect(e.x, e.y + e.h + edge, e.w, hem)
-        ctx.strokeRect(e.x, e.y, e.w, e.h + edge + hem)
+        ctx.fillRect(e.x, e.y + h + edge, w, hem)
+        ctx.strokeRect(e.x, e.y, w, h + edge + hem)
       }
 
       ctx.strokeStyle = 'red'
