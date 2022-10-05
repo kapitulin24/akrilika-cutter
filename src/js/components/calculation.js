@@ -73,6 +73,8 @@ export function calculate(p) {
       }
     }
 
+    if (!p.parts.length) fnc.changePartsInfoInPlate()
+
     //если закончились остатки то беремся за те которые превысили длину листа
     /* находим только оптимальное деление только самого первого, удаляем из forDivide и выплёвывыем во внешний цикл */
     if (!p.parts.length && p.forDivide.length) {
@@ -80,7 +82,7 @@ export function calculate(p) {
 
       //если вычисляются заготовки больше размера листа первыми, то считаем сразу все
       //иначе по одной сратаемся разбросать по свободным местам
-      fnc.allItemsDivide(overLengthFirst ? p.forDivide.length : 1, p._divideParam)
+      fnc.allItemsDivide(overLengthFirst ? p.forDivide.length : 1)
 
       fnc.sort(p.parts)
       fnc.resetCurrentPlate()
@@ -88,22 +90,31 @@ export function calculate(p) {
 
     //если можно делить изделия и все уже было разложено
     if (cut && !p.parts.length && !p.forDivide.length) {
-        const parts = fnc.selectItemsOfLastParts()
-        if (parts.items) {
-          const last = p.plates[p.plates.length - 1],
-                l = length - (p.sizeStep * parts.emptyParts)
-          p.forDivide = parts.items
-          p._divideParam = {queue: true}
-          if (!l) {
-            fnc.deleteLastPlate()
-          } else {
-            last.length = l
-            last.wasSelectedParts.length = Math.round(last.length / p.sizeStep) + 1
-            fnc.findUnusedSpace(p.plates.length - 1)
-          }
+      const parts = fnc.selectItemsOfLastParts()
+      if (parts.items) {
+        const last = p.plates[p.plates.length - 1],
+              uniqItems = parts.items.reduce((acc, el) => {
+                acc[el.id] = acc[el.id] ? ++acc[el.id] : 1
+                return acc
+              }, {})
+        p.forDivide = parts.items.map(e => ({...e})) //копируем каждый объект
 
-          fnc.resetCurrentPlate()
+        last.length = length - (p.sizeStep * parts.emptyParts)
+        last.wasSelectedParts.length = Math.round(last.length / p.sizeStep) + 1
+        fnc.findUnusedSpace(p.plates.length - 1)
+
+        fnc.allItemsDivide(p.forDivide.length)
+        for (let i of Object.keys(uniqItems)) {
+          if (p.parts.filter(e => e.id === i).length < uniqItems[i] * 2) {
+            last.items.push(...parts.items)
+            p.parts = []
+            last.length += p.sizeStep
+            break;
+          }
         }
+        last.length || fnc.deleteLastPlate()
+        fnc.resetCurrentPlate()
+      }
     }
 
     if (++countIteration > p._maxIteration) {

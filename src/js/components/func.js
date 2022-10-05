@@ -15,6 +15,24 @@ export const fnc = {
     plate.wasSelectedParts = new Array(count).fill(value)
   },
 
+  canBeDivided(item) {
+    return item.parts < this.c.config.maxStack + 1
+  },
+
+  changePartsInfoInPlate(id, startPart, parts) {
+    let count = startPart
+    cancel: for (let i in this.c.plates) {
+      for (let j in this.c.plates[i].items) {
+        const item = this.c.plates[i].items[j]
+        if (item.id === id) {
+          item.part = ++count
+          item.parts = parts
+          if (count === parts) break cancel
+        }
+      }
+    }
+  },
+
   //создать новый лист
   createNewPlate() {
     const c = this.c
@@ -24,19 +42,14 @@ export const fnc = {
 
     //если длина последнего листа равна общей длине листа, то создаем новый лист
     if (lastLength === length) {
-      if (!c.deletedPlate) {
-        const matrix = Array.from(Array(height), () => new Array(length).fill(this.c._symbols.unusedSpace)),
-          newPlate = {length, height, items: [], matrix,
-            unusedSpace: [{x: 0, y:0, w: length, h: height}],
-            spaceSymbol: c._symbols.startSpace
-          }
-        c.plates.push(newPlate)
-        this.fillWasSelected()
-      } else {
-        c.plates.push(c.deletedPlate)
-        c.deletedPlate = null
-      }
+      const matrix = Array.from(Array(height), () => new Array(length).fill(this.c._symbols.unusedSpace)),
+        newPlate = {length, height, items: [], matrix,
+          unusedSpace: [{x: 0, y:0, w: length, h: height}],
+          spaceSymbol: c._symbols.startSpace
+        }
 
+      c.plates.push(newPlate)
+      this.fillWasSelected()
       isCreated = true
     } else { //иначе добавляем к длине листа кратными частями
       newLength = this.getCurrentLength(lastLength, 'ceil')
@@ -62,9 +75,7 @@ export const fnc = {
 
   //удалить последний лист
   deleteLastPlate() {
-    this.fillWasSelected(true)
-    this.findUnusedSpace(this.c.plates.length - 1)
-    this.c.deletedPlate = this.c.plates.splice(-1)[0]
+    this.c.plates.splice(-1)
   },
 
   //сравнить массивы
@@ -78,8 +89,7 @@ export const fnc = {
   },
 
   //разделить элементы
-  allItemsDivide(iteration, param = {}) {
-    if (param.queue) iteration = 1
+  allItemsDivide(iteration) {
     for (let item = 0; item < iteration; item++) {
       divider(this.c)
     }

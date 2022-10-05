@@ -27,9 +27,7 @@ export function cutter(param) {
     parts: [],
     forDivide: [],
     plates: [],
-    deletedPlate: null,
     _errors: [],
-    _divideParam: {},
     _currentIndexPlate: 0,
     _symbols: {
       unusedSpace: 0,

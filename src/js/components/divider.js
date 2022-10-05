@@ -1,17 +1,15 @@
 import {fnc} from './func'
 
 const divider = (p) => {
-  const {length, step, minPart, maxStack, partName, rotate} = p.config
-  let ms = maxStack, parts
+  const {length, step, minPart, maxStack, rotate} = p.config
+  let maxPart, parts, part = 0
 
   //ищем свободные простанства
   const findUnusedAll = () => {
     p.unusedRectAll = []
-    p.plates.forEach((plate, i) => {
-      plate.unusedSpace.forEach(space => {
-        p.unusedRectAll.push({...space})
-      })
-    })
+    for (let plate = 0; plate < p.plates.length; plate++) {
+      p.unusedRectAll.push(...fnc.findUnusedSpace(plate, true))
+    }
   }
 
   const filterUnusedAll = () => {
@@ -36,7 +34,7 @@ const divider = (p) => {
 
     startSumm % length && res.push(startSumm % length)
 
-    if (res.length < ms) {
+    if (res.length < maxPart) {
       for (let i = 0; i < p.unusedRectAll.length - 1; i++) {
         //если следующий элемент ближе к нужному размеру переходим к нему
         if (summ + p.unusedRectAll[i + 1].w > currRect.w) {
@@ -68,7 +66,7 @@ const divider = (p) => {
         }
 
         //прерываем если нашли сумму или превысили максимально количество стыков
-        if (summ >= currRect.w || res.length === ms) break
+        if (summ >= currRect.w || res.length === maxPart) break
       }
     }
 
@@ -91,41 +89,54 @@ const divider = (p) => {
 
   //первый элемент тот что больше заготовки, он всегда самый длинный
   const currRect = p.forDivide[0]
-
   /*валидация сразу предусматривает что тут не будут заготовки которые невозможно разделить
     на нужное количество стыков, поэтому можно сразу удалить*/
   p.forDivide.splice(0, 1)
 
-  ms = maxStack + 2 - currRect.parts
+  if (fnc.canBeDivided(currRect)) { //если можно делить
+    maxPart = maxStack + 2 - currRect.parts
 
-  //повернутый элемент поворачиваем обратно
-  if (currRect && currRect.rotate) {
-    currRect.rotate = false;
-    [currRect.w, currRect.h] = [currRect.h, currRect.w]
+    //повернутый элемент поворачиваем обратно
+    if (currRect && currRect.rotate) {
+      currRect.rotate = false;
+      [currRect.w, currRect.h] = [currRect.h, currRect.w]
+    }
+
+    findUnusedAll()
+    filterUnusedAll()
+
+    parts = findParts()
+    p.unusedRectAll = null
+  } else {
+    parts = [currRect.w]
+    part = currRect.part
   }
 
-  findUnusedAll()
-  filterUnusedAll()
-
-  //todo посчитать сколько можно раз делить и исправить и таких же part и parts
-  //todo разобраться с расположением есть 1 ошибка
-  //todo исправить пересечение прямоугольников(свободных)
-  //todo все настройки листов в листы
-  //todo оптимизировать поиск незянятого пространства
-
-  parts = findParts()
-  p.unusedRectAll = null
+  const currParts = currRect.parts + parts.length - 1
 
   p.parts.push(...parts.map((e, i) => {
     return {
       ...currRect,
-      name: `${currRect.name} ${partName} ${i + 1}`,
+      name: currRect.name,
       w: e,
       h: currRect.h,
-      part: i + 1,
-      parts: parts.length
+      part: part || i + 1,
+      parts: currParts
     }
   }))
+  if (parts.length > 1 && parts.length !== currParts) {
+    let count = 0
+    p.forDivide.forEach(e => {
+      if (e.id === currRect.id) {
+        e.part = parts.length + ++count
+        e.parts = currParts
+      }
+    })
+    fnc.changePartsInfoInPlate(currRect.id, parts.length + count, currParts)
+  }
 }
 
 export {divider}
+
+//todo посчитать сколько можно раз делить и исправить и таких же part и parts
+//todo оптимизировать поиск незянятого пространства

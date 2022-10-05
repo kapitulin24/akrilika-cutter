@@ -131,7 +131,7 @@ function drawMatrix(cut) {
     ctx.fillStyle = 'LimeGreen'
     for (let x = 0; x < items.matrix.length; x++) {
       for (let y = 0; y < items.matrix[x].length; y++) {
-        items.matrix[x][y] !== 1 && ctx.fillRect(y, x, 1, 1)
+        items.matrix[x][y] !== 1 && items.matrix[x][y] !== 4 && ctx.fillRect(y, x, 1, 1)
       }
     }
     div.append(canvas)
