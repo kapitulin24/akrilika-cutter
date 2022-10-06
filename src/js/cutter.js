@@ -26,6 +26,7 @@ export function cutter(param) {
     parts: [],
     forDivide: [],
     plates: [],
+    time: 0,
     _errors: [],
     _currentIndexPlate: 0,
     _symbols: {
@@ -38,6 +39,7 @@ export function cutter(param) {
     _maxIteration: 100 //максимальное количество итераций в цикле while
   }
   //endregion inputData
+  const startTime = new Date().getTime();
 
   validation(data)
   if (data._errors.length) return data
@@ -49,7 +51,7 @@ export function cutter(param) {
   data.eh = data.config.edge + data.config.hem
   //вычисление
   calculate(data)
+  data.time = (new Date().getTime() - startTime) * 1e-3
 
-  console.log(data)
   return data
 }

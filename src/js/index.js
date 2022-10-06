@@ -37,6 +37,7 @@ function calc(e) {
   const cut = cutter(data),
     errorsBlock = document.querySelector('#errors')
 
+  document.querySelector('#time').innerText = `${cut.time} cек.`
   errorsBlock.innerHTML = ''
 
   if (cut._errors.length) {

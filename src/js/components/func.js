@@ -11,6 +11,8 @@ export const fnc = {
     this.c._currentIndexPlate = 0
   },
 
+
+
   //заполнить массив частей если их уже разделяли
   fillWasSelected(value = false, index = this.c.plates.length - 1) {
     const plate = this.c.plates[index],
