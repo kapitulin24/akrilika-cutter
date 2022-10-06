@@ -3,14 +3,14 @@ import {fnc} from './func'
 export function calculate(p) {
   const {length, rotate, cut} = p.config
 
-  let countIteration = 0
+  let countIteration = 0, next = false
 
   fnc.bindContext(p)
 
   //создаем новый лист
   fnc.createNewPlate()
 
-  while (p.parts.length || p.forDivide.length) {
+  while (p.parts.length || p.forDivide.length || next) {
     const currentPlate = p.plates[p._currentIndexPlate]
     let isFound = false
 
@@ -93,12 +93,30 @@ export function calculate(p) {
     //если можно делить изделия и все уже было разложено
     if (cut && !p.parts.length && !p.forDivide.length) {
       const parts = fnc.selectItemsOfLastParts()
-      if (parts.items) {
+      next = !!parts.items
+      if (next) {
         const last = p.plates[p.plates.length - 1],
               uniqItems = parts.items.reduce((acc, el) => {
                 acc[el.id] = acc[el.id] ? ++acc[el.id] : 1
                 return acc
-              }, {})
+              }, {}),
+              comeBackItems = () => {
+                for (let i of Object.keys(uniqItems)) { //если не разделена вся часть, то возвращаем обратно
+                  if (p.parts.filter(e => e.id === i).length < uniqItems[i] * 2) {
+                    last.items.push(...parts.items)
+                    last.length += p.sizeStep
+                    next = false
+                    return true
+                  }
+                }
+                return false
+              },
+              putItems = () => {
+                p.parts.forEach(part => {
+                  p.plates[part.fromPlate].items.push(part)
+                })
+              }
+
         p.forDivide = parts.items.map(e => ({...e})) //копируем каждый объект
 
         last.length = length - (p.sizeStep * parts.emptyParts)
@@ -106,17 +124,8 @@ export function calculate(p) {
         fnc.findUnusedSpace(p.plates.length - 1)
 
         fnc.allItemsDivide(p.forDivide.length)
-        for (let i of Object.keys(uniqItems)) {
-          if (p.parts.filter(e => e.id === i).length < uniqItems[i] * 2) {
-            last.items.push(...parts.items)
-            last.length += p.sizeStep
-            break;
-          }
-        }
-    //todo продолжить тут
-        p.parts.forEach(part => {
-          p.plates[part.fromPlate].items.push(part)
-        })
+
+        comeBackItems() || putItems()
         p.parts = []
         last.length || fnc.deleteLastPlate()
         fnc.resetCurrentPlate()

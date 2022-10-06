@@ -19,13 +19,28 @@ export const fnc = {
     return item.parts < this.c.config.maxStack + 1
   },
 
+  changePartName(partItemOrName, part = false) {
+    if (typeof partItemOrName === 'string' && part === false) {
+      console.warn('props error')
+      return
+    }
+
+    const name = typeof partItemOrName === 'string' ? partItemOrName : partItemOrName.name,
+      regExp = new RegExp(`${this.c.config.partName}.+$`),
+      partName = `${this.c.config.partName} ${part === false ? partItemOrName.part : part}`
+
+    return regExp.test(name) ? name.replace(regExp, ` ${partName}`) : `${name} ${partName}`
+  },
+
   changePartsInfoInPlate(id, startPart, parts) {
     let count = startPart
     cancel: for (let i in this.c.plates) {
       for (let j in this.c.plates[i].items) {
         const item = this.c.plates[i].items[j]
         if (item.id === id) {
-          item.part = ++count
+          ++count
+          item.name = this.changePartName(item, count)
+          item.part = count
           item.parts = parts
           if (count === parts) break cancel
         }
@@ -180,11 +195,11 @@ export const fnc = {
         if (conditionFind(startY, x) || conditionFind(startY - topY, x)) break
         w++
       }
-      for (let x = startX - 1; x >= 0; x--) {
-        if (conditionFind(startY, x) || conditionFind(startY - topY, x)) break
-        leftX++
-        w++
-      }
+      // for (let x = startX - 1; x >= 0; x--) {
+      //   if (conditionFind(startY, x) || conditionFind(startY - topY, x)) break
+      //   leftX++
+      //   w++
+      // }
       return {w, x: leftX}
     }
 

@@ -51,7 +51,7 @@ const divider = (p) => {
           let w = current.w - (summ > currRect.w ? summ - currRect.w : 0),
               h = currRect.h
 
-          res.push({w, h, fromPlate: current.fromPlate})
+          res.push({x: current.x, y: current.y, w, h, fromPlate: current.fromPlate, rotate: current.rotate})
           fnc.fillRect(current.x, w, current.y, h, fillParam)
 
           for (let i = 0; i < p.unusedRectAll.length; i++) {
@@ -104,6 +104,7 @@ const divider = (p) => {
     return {
       ...currRect,
       ...e,
+      name: fnc.changePartName(currRect.name, part || i + 1),
       part: part || i + 1,
       parts: currParts
     }
@@ -114,6 +115,7 @@ const divider = (p) => {
       if (e.id === currRect.id) {
         e.part = parts.length + ++count
         e.parts = currParts
+        e.name = fnc.changePartName(e)
       }
     })
     fnc.changePartsInfoInPlate(currRect.id, parts.length + count, currParts)
