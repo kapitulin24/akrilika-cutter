@@ -2,7 +2,7 @@ import {fnc} from './func'
 
 const divider = (p) => {
   const {minPart, maxStack, rotate} = p.config
-  let maxPart, parts, part = 0
+  let maxPart, parts = [false]
 
   //ищем свободные простанства
   const findUnusedAll = () => {
@@ -51,7 +51,7 @@ const divider = (p) => {
           let w = current.w - (summ > currRect.w ? summ - currRect.w : 0),
               h = currRect.h
 
-          res.push({x: current.x, y: current.y, w, h, fromPlate: current.fromPlate, rotate: current.rotate})
+          res.push({...currRect, x: current.x, y: current.y, w, h, fromPlate: current.fromPlate, rotate: current.rotate})
           fnc.fillRect(current.x, w, current.y, h, fillParam)
 
           for (let i = 0; i < p.unusedRectAll.length; i++) {
@@ -71,7 +71,7 @@ const divider = (p) => {
     }
 
     //если не нашли нужную сумму возвращаем входной элемент
-    if (summ < currRect.w) return [currRect]
+    if (summ < currRect.w) return [false]
 
     return res
   }
@@ -93,36 +93,11 @@ const divider = (p) => {
 
     parts = findParts()
     p.unusedRectAll = null
-  } else {
-    parts = [{...currRect}]
-    part = currRect.part
   }
 
-  const currParts = currRect.parts + parts.length - 1
-
-  p.parts.push(...parts.map((e, i) => {
-    return {
-      ...currRect,
-      ...e,
-      name: fnc.changePartName(currRect.name, part || i + 1),
-      part: part || i + 1,
-      parts: currParts
-    }
-  }))
-  if (parts.length > 1 && parts.length !== currParts) {
-    let count = 0
-    p.forDivide.forEach(e => {
-      if (e.id === currRect.id) {
-        e.part = parts.length + ++count
-        e.parts = currParts
-        e.name = fnc.changePartName(e)
-      }
-    })
-    fnc.changePartsInfoInPlate(currRect.id, parts.length + count, currParts)
-  }
+  p.parts.push(...parts)
 }
 
 export {divider}
 
-//todo посчитать сколько можно раз делить и исправить и таких же part и parts
 //todo оптимизировать поиск незянятого пространства + увеличить шаг

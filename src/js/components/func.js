@@ -1,25 +1,30 @@
 import {divider} from './divider'
 
 export const fnc = {
+  //прикрутить контекст
   bindContext(context) {
     this.c = context
   },
 
+  //сброс текущего листа
   resetCurrentPlate() {
     this.c._currentIndexPlate = 0
   },
 
+  //заполнить массив частей если их уже разделяли
   fillWasSelected(value = false, index = this.c.plates.length - 1) {
     const plate = this.c.plates[index],
       count = Math.round(plate.length / this.c.sizeStep)
     plate.wasSelectedParts = new Array(count).fill(value)
   },
 
+  //можно ли разделять изделие
   canBeDivided(item) {
     return item.parts < this.c.config.maxStack + 1
   },
 
-  changePartName(partItemOrName, part = false) {
+  //обновить имя изделия
+  updatePartName(partItemOrName, part = false) {
     if (typeof partItemOrName === 'string' && part === false) {
       console.warn('props error')
       return
@@ -29,17 +34,18 @@ export const fnc = {
       regExp = new RegExp(`${this.c.config.partName}.+$`),
       partName = `${this.c.config.partName} ${part === false ? partItemOrName.part : part}`
 
-    return regExp.test(name) ? name.replace(regExp, ` ${partName}`) : `${name} ${partName}`
+    return regExp.test(name) ? name.replace(regExp, partName) : `${name} ${partName}`
   },
 
-  changePartsInfoInPlate(id, startPart, parts) {
+  //обновить информацию о частях изделий на листах
+  updatePartsInfoInPlate(id, startPart, parts) {
     let count = startPart
     cancel: for (let i in this.c.plates) {
       for (let j in this.c.plates[i].items) {
         const item = this.c.plates[i].items[j]
         if (item.id === id) {
           ++count
-          item.name = this.changePartName(item, count)
+          item.name = this.updatePartName(item, count)
           item.part = count
           item.parts = parts
           if (count === parts) break cancel
@@ -139,7 +145,7 @@ export const fnc = {
     cancel: for (let step = this.c.config.length - this.c.sizeStep, num = this.c.countPart - 1; step >= 0; step -= this.c.sizeStep, num--) {
       for (let item = 0; item < current.items.length; item++) {
         const el = current.items[item],
-          w = el.rotate ? el.h : el.w
+          w = el.rotate ? el.h + this.c.eh : el.w
         if (el.x + w > step) {
           if (current.wasSelectedParts.length - 1 >= num && current.wasSelectedParts[num]) {
             break cancel
@@ -228,8 +234,9 @@ export const fnc = {
   sort(arr, param = 'w') {
     return arr.sort((a, b) => b[param] - a[param])
   },
+
   //случайный id
-  rndID(length = 5) {
+  rndID(length = 8) {
     return Math.random().toString(36).substr(2, length)
   }
 }

@@ -97,23 +97,32 @@ export function calculate(p) {
       if (next) {
         const last = p.plates[p.plates.length - 1],
               uniqItems = parts.items.reduce((acc, el) => {
-                acc[el.id] = acc[el.id] ? ++acc[el.id] : 1
+                acc[el.id] = el.parts
                 return acc
               }, {}),
               comeBackItems = () => {
-                for (let i of Object.keys(uniqItems)) { //если не разделена вся часть, то возвращаем обратно
-                  if (p.parts.filter(e => e.id === i).length < uniqItems[i] * 2) {
-                    last.items.push(...parts.items)
-                    last.length += p.sizeStep
-                    next = false
-                    return true
-                  }
-                }
-                return false
+                last.items.push(...parts.items)
+                last.length += p.sizeStep
+                next = false
+              },
+              updateInfoParts = () => {
+                Object.keys(uniqItems).forEach(itemId => {
+                  const partsFilter = p.parts.filter(part => part.id === itemId),
+                    parts = uniqItems[itemId] + partsFilter.length - 1
+                  let count = 0
+                  partsFilter.forEach(part => {
+                    part.part = ++count
+                    part.parts = parts
+                    part.name = fnc.updatePartName(part)
+                  })
+                  fnc.updatePartsInfoInPlate(itemId, count, parts)
+                })
               },
               putItems = () => {
                 p.parts.forEach(part => {
                   p.plates[part.fromPlate].items.push(part)
+                  fnc.fillRect(part.x, part.w, part.y, part.h, {rotate: part.rotate, index: part.fromPlate})
+                  fnc.findUnusedSpace(part.fromPlate)
                 })
               }
 
@@ -125,7 +134,13 @@ export function calculate(p) {
 
         fnc.allItemsDivide(p.forDivide.length)
 
-        comeBackItems() || putItems()
+        if (p.parts.some(e => e === false)) {
+          comeBackItems()
+        } else {
+          updateInfoParts()
+          putItems()
+        }
+
         p.parts = []
         last.length || fnc.deleteLastPlate()
         fnc.resetCurrentPlate()
