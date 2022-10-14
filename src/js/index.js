@@ -29,7 +29,6 @@ function calc(e) {
   }
 
   data.parts = parts
-  data.overLengthFirst = !!data.overLengthFirst
   data.nameIsPrefix = !!data.nameIsPrefix
   data.rotate = !!data.rotate
   data.cut = !!data.cut
@@ -40,8 +39,8 @@ function calc(e) {
   document.querySelector('#time').innerText = `${cut.time} cек.`
   errorsBlock.innerHTML = ''
 
-  if (cut._errors.length) {
-    cut._errors.forEach((e, i) => {
+  if (cut.errors.length) {
+    cut.errors.forEach((e, i) => {
       errorsBlock.innerHTML += `<div>${i}. ${e}</div>`
     })
   } else {
