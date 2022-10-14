@@ -104,7 +104,7 @@ function dispatch(action) {
     }
     case FIND_UNUSED_SPACE: {
       //поиск неиспользуемых пространств на листе
-      return findUnusedSpace(state.plates, cnf.height, state.symbols, action.index, action.divideMode)
+      return findUnusedSpace(cnf.minPart, state.plates, cnf.height, state.symbols, action.index, action.divideMode)
     }
     case GET_PARTS_LENGTH: {
       return state.parts.length
