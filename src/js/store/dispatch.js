@@ -77,7 +77,7 @@ function dispatch(action) {
       return divider(state.plates, cnf.minPart, cnf.rotate, state.eh, cnf.maxStack, state.symbols.divide, action.items)
     }
     case BASIC_POSITIONING: {
-      return basicPositioning(cnf.rotate, state.maxIteration, state.eh)
+      return basicPositioning(cnf.rotate, state.maxIteration, state.eh, cnf.length)
     }
     case DIVISION_OF_PRODUCTS: {
       return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration)

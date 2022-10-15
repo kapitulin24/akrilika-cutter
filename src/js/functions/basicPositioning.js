@@ -18,7 +18,7 @@ import {
 } from "../store/actionCreators"
 import exceedingIterations from "./exceedingIterations"
 
-function basicPositioning(isRotate, maxIteration, eh) {
+function basicPositioning(isRotate, maxIteration, eh, length) {
   let countIteration = 0
   while (getPartsLengthAC()) {
     let isFound = false
@@ -64,7 +64,7 @@ function basicPositioning(isRotate, maxIteration, eh) {
       //и только если текущий лист уже был использован
       if (unused === getUnusedSpaceLengthAC() - 1 && getPlateItemsLengthAC()) {
         let isCreated = true
-        if (fromPlate === getPlatesLengthAC() - 1) {
+        if (fromPlate === getPlatesLengthAC() - 1 && getPartsLengthAC()) {
           isCreated = createNewPlateAC()
         }
         isCreated && !isFound && nextIndexPlateAC()

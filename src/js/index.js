@@ -94,20 +94,20 @@ function draw(cut, mode = 'items') {
         ctx.fillRect(e.x, e.y + h + edge, w, hem)
         ctx.strokeRect(e.x, e.y, w, h + edge + hem)
       }
-
-      ctx.strokeStyle = 'red'
-      ctx.beginPath();
-      ctx.setLineDash([30, 10]);
-      ctx.moveTo(915, 0);
-      ctx.lineTo(915, 760);
-      ctx.moveTo(1830, 0);
-      ctx.lineTo(1830, 760);
-      ctx.moveTo(2745, 0);
-      ctx.lineTo(2745, 760);
-      ctx.stroke();
-      ctx.strokeStyle = 'black'
-      ctx.setLineDash([]);
     })
+
+    ctx.strokeStyle = 'red'
+    ctx.beginPath();
+    ctx.setLineDash([30, 10]);
+    ctx.moveTo(915, 0);
+    ctx.lineTo(915, 760);
+    ctx.moveTo(1830, 0);
+    ctx.lineTo(1830, 760);
+    ctx.moveTo(2745, 0);
+    ctx.lineTo(2745, 760);
+    ctx.stroke();
+    ctx.strokeStyle = 'black'
+    ctx.setLineDash([]);
 
     div.append(canvas)
     graph.append(div)

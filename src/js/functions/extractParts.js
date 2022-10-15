@@ -15,9 +15,9 @@ function extractParts(parts, name, length, partName, nameIsPrefix) {
         w = rect.length % length,
         h = rect.height
 
-      for (let i = 0, part = 1; i <= rect.length; i += length, part++) {
+      for (let i = 0, part = 1; i < rect.length; i += length, part++) {
         const name = baseName + (parts > 1 ? ` ${partName} ${part}` : '')
-        result.push({...rect, name, w: part === 1 ? w : length, h, id, part, parts})
+        result.push({...rect, name, w: part === 1 && w !== 0 ? w : length, h, id, part, parts})
       }
     }
   })
