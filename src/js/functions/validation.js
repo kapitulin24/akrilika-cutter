@@ -6,10 +6,12 @@ function validation(data) {
     data.height,
     data.edge,
     data.hem,
-    data.minPart,
-    data.maxStack
+    data.minPart
   ].some(e => !Number.isInteger(e) || e <= 0)) {
     errors.push(`Element is not integer or > 0`)
+  }
+  if (data.maxStack < 0 || !Number.isInteger(data.maxStack)) {
+    errors.push(`Max Stack is not valid (${data.maxStack})`)
   }
   const notValidElements = data.parts.filter(part => {
     return part.length > data.length * (data.maxStack + 1)

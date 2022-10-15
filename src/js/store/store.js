@@ -31,7 +31,9 @@ const store = {
   },
 
   getErrors() {
-    return this._state.errors
+    return {
+      errors: this._state.errors
+    }
   },
 
   setState(data) {

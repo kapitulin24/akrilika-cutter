@@ -48,7 +48,7 @@ function dispatch(action) {
     }
     case EXTRACT_PARTS: {
       //извлечь изделия с некоторыми преобразованиями
-      return store.setState({parts: extractParts(cnf.parts, cnf.name, cnf.length, cnf.partName, cnf.nameIsPrefix)})
+      return store.setState({parts: extractParts(cnf.parts, cnf.name, cnf.length, cnf.partName, cnf.nameIsPrefix, cnf.minPart)})
     }
     case ADD_STATE_DATA: {
       //добавить данные в стейт

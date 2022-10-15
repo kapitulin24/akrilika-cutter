@@ -1,7 +1,7 @@
 import rndID from "./rndID"
 import decreaseSort from "./decreaseSort"
 
-function extractParts(parts, name, length, partName, nameIsPrefix) {
+function extractParts(parts, name, length, partName, nameIsPrefix, minPart) {
   const result = []
 
   //раскукоживаем
@@ -12,12 +12,14 @@ function extractParts(parts, name, length, partName, nameIsPrefix) {
           : `${name} ${i + 1}-${part}`,
         id = rndID(),
         parts = Math.ceil(rect.length / (length)),
-        w = rect.length % length,
-        h = rect.height
+        h = rect.height,
+        w = rect.length % length || length,
+        difference = w > 0 && w < minPart ? minPart - w : 0
 
       for (let i = 0, part = 1; i < rect.length; i += length, part++) {
-        const name = baseName + (parts > 1 ? ` ${partName} ${part}` : '')
-        result.push({...rect, name, w: part === 1 && w !== 0 ? w : length, h, id, part, parts})
+        const name = baseName + (parts > 1 ? ` ${partName} ${part}` : ''),
+              width = part === 1 ? w + difference : part === 2 ? length - difference : length
+        result.push({...rect, name, w: width, h, id, part, parts})
       }
     }
   })
