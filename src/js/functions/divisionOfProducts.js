@@ -1,6 +1,14 @@
 import {
-  addItemsToPlateAC, deleteLastPlateAC, dividerAC, fillRectAC, findUnusedSpaceAC, getPlateLengthAC,
-  getPlatesLengthAC, selectItemsOfLastPartAC, setNewLengthPlateAC
+  addItemsToPlateAC,
+  deleteLastPlateAC,
+  dividerAC,
+  fillRectAC,
+  findUnusedSpaceAC,
+  getPlateItemsLengthAC,
+  getPlateLengthAC,
+  getPlatesLengthAC,
+  selectItemsOfLastPartAC,
+  setNewLengthPlateAC
 } from "../store/actionCreators"
 import exceedingIterations from "./exceedingIterations"
 import updateInfoParts from "./updateInfoParts"
@@ -43,7 +51,7 @@ function divisionOfProducts(length, sizeStep, maxIteration) {
       }
       countIteration = 0
 
-      getPlateLengthAC(lastPlateIndex) || deleteLastPlateAC()
+      getPlateItemsLengthAC(lastPlateIndex) || deleteLastPlateAC()
     }
 
     ++countIteration

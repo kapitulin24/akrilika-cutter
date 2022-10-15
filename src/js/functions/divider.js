@@ -1,7 +1,7 @@
 import {fillRectAC, findUnusedSpaceAC} from "../store/actionCreators"
 import decreaseSort from "./decreaseSort"
 
-function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items) {
+function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, length) {
   const result = []
   let unusedRectAll = null
 
@@ -32,7 +32,7 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items) {
     }
 
 //поиск оптимальных частей на которые можно разделить изделие
-    const findParts = () => {
+    const findParts = (limit = Math.round(length / 2)) => {
       let summ = 0, res = []
 
       if (res.length < maxPart) {
@@ -44,6 +44,7 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items) {
             const current = unusedRectAll[i],
               index = current.fromPlate
 
+            current.w = current.w > limit ? limit : current.w
             summ += current.w
 
             let w = current.w - (summ > currRect.w ? summ - currRect.w : 0),
@@ -91,8 +92,11 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items) {
         }
       }
 
-      //если не нашли нужную сумму возвращаем входной элемент
-      if (summ < currRect.w) return [false]
+      if (summ < currRect.w && limit < length) {//если не нашли нужную сумму с лимитом, то пробуем без него
+        return findParts(length)
+      } else if (summ < currRect.w) {//иначе если просто не нашли нужную сумму возвращаем входной элемент
+        return [false]
+      }
 
       return res
     }

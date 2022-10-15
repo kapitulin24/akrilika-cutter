@@ -74,13 +74,13 @@ function dispatch(action) {
       return cnf.cut
     }
     case DIVIDER: {
-      return divider(state.plates, cnf.minPart, cnf.rotate, state.eh, cnf.maxStack, state.symbols.divide, action.items)
+      return divider(state.plates, cnf.minPart, cnf.rotate, state.eh, cnf.maxStack, state.symbols.divide, action.items, cnf.length)
     }
     case BASIC_POSITIONING: {
       return basicPositioning(cnf.rotate, state.maxIteration, state.eh, cnf.length)
     }
     case DIVISION_OF_PRODUCTS: {
-      return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration)
+      return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration, state.eh, cnf.height)
     }
     case PUSH_NEW_PLATE: {
       //пушим новый лист
