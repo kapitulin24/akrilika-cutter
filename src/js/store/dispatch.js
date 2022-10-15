@@ -5,7 +5,7 @@ import {
   GET_PARTS_LENGTH, GET_PLATE_ITEMS_LENGTH, GET_STATE, GET_PLATES_LENGTH, GET_UNUSED_SPACE_ITEM,
   GET_UNUSED_SPACE_LENGTH, INITIAL_STATE, IS_CUT, NEXT_INDEX_PLATE, PREPARE_CONFIG_DATA, PUSH_NEW_PLATE,
   REVERSE_UNUSED_SPACE, SELECT_ITEMS_OF_LAST_PART, SET_NEW_LENGTH_PLATE, SET_NEW_UNUSED_SPACE, VALIDATE_CONFIG_DATA,
-  GET_CURRENT_INDEX_PLATE, GET_PLATE_ITEM, DELETE_PLATE_ITEM, GET_PLATE_LENGTH, UPDATE_INFO_PARTS, UPDATE_PART_NAME,
+  GET_CURRENT_INDEX_PLATE, GET_PLATE_ITEM, DELETE_PLATE_ITEM, GET_PLATE_LENGTH, UPDATE_PART_NAME,
   UPDATE_PARTS_INFO_IN_PLATE, DELETE_LAST_PLATE, DIVIDER, DIVISION_OF_PRODUCTS, BASIC_POSITIONING
 } from "./actions"
 import validation from "../functions/validation"
@@ -18,7 +18,7 @@ import selectItemsOfLastPart from "../functions/selectItemsOfLastPart"
 import updatePartName from "../functions/updatePartName"
 import {divider} from "../functions/divider"
 import divisionOfProducts from "../functions/divisionOfProducts"
-import {updatePartNameAC, updatePartsInfoInPlateAC} from "./actionCreators"
+import {updatePartNameAC} from "./actionCreators"
 import basicPositioning from "../functions/basicPositioning"
 
 function dispatch(action) {
@@ -196,19 +196,6 @@ function dispatch(action) {
         }
       }
       return
-    }
-    case UPDATE_INFO_PARTS: {
-      return Object.keys(action.uniqItems).forEach(itemId => {
-        const partsFilter = state.parts.filter(part => part.id === itemId),
-          parts = action.uniqItems[itemId] + partsFilter.length - 1
-        let count = 0
-        partsFilter.forEach(part => {
-          part.part = ++count
-          part.parts = parts
-          part.name = updatePartNameAC(part)
-        })
-        updatePartsInfoInPlateAC(itemId, count, parts)
-      })
     }
     //endregion CALCULATE
   }

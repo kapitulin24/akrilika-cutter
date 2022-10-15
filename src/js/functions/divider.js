@@ -33,8 +33,7 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items) {
 
 //поиск оптимальных частей на которые можно разделить изделие
     const findParts = () => {
-      let summ = 0,
-        res = []
+      let summ = 0, res = []
 
       if (res.length < maxPart) {
         for (let i = 0; i < unusedRectAll.length - 1; i++) {
@@ -50,7 +49,30 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items) {
             let w = current.w - (summ > currRect.w ? summ - currRect.w : 0),
               h = currRect.h
 
-            res.push({...currRect, x: current.x, y: current.y, w, h, fromPlate: current.fromPlate, rotate: current.rotate})
+            if (w < minPart) { //если ширина меньше минимальной то из каждого предыдущего отрезка пытаемся взять по кусочку
+              for (let i = res.length - 1; i >= 0; i--) {
+                const newWidth = res[i].w - (minPart - w)
+                if (newWidth >= minPart) {
+                  res[i].w = newWidth
+                  w = minPart
+                  break
+                } else {
+                  w += res[i].w - minPart
+                  res[i].w = minPart
+                }
+                if (i === 0) return [false] //если невозможно возвращаем false
+              }
+            }
+
+            res.push({
+              ...currRect,
+              x: current.x,
+              y: current.y,
+              w,
+              h,
+              fromPlate: current.fromPlate,
+              rotate: current.rotate
+            })
             fillRectAC({x: current.x, w, y: current.y, h, rotate: current.rotate, value: divideSymbol, index})
 
             for (let i = 0; i < unusedRectAll.length; i++) {
@@ -81,17 +103,16 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items) {
       на нужное количество стыков, поэтому можно сразу удалить*/
     items.splice(0, 1)
 
-    if (currRect.parts < maxStack + 1) { //если можно делить
-      maxPart = maxStack + 2 - currRect.parts
+    //если объекты уже нельзя будет разделить то возможно они будут перемещены
+    maxPart = maxStack + 2 - currRect.parts
 
-      //повернутый элемент поворачиваем обратно
-      if (currRect && currRect.rotate) currRect.rotate = false;
+    //повернутый элемент поворачиваем обратно
+    if (currRect && currRect.rotate) currRect.rotate = false
 
-      findUnusedAll()
-      filterUnusedAll()
+    findUnusedAll()
+    filterUnusedAll()
 
-      parts = findParts()
-    }
+    parts = findParts()
 
     result.push(...parts)
   }

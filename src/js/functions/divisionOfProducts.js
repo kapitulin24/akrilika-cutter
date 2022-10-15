@@ -1,10 +1,9 @@
 import {
   addItemsToPlateAC, deleteLastPlateAC, dividerAC, fillRectAC, findUnusedSpaceAC, getPlateLengthAC,
-  getPlatesLengthAC,
-  selectItemsOfLastPartAC,
-  setNewLengthPlateAC, updateInfoPartsAC
+  getPlatesLengthAC, selectItemsOfLastPartAC, setNewLengthPlateAC
 } from "../store/actionCreators"
 import exceedingIterations from "./exceedingIterations"
+import updateInfoParts from "./updateInfoParts"
 
 function divisionOfProducts(length, sizeStep, maxIteration) {
   let next = true, dividedItems = null, countIteration = 0
@@ -39,7 +38,7 @@ function divisionOfProducts(length, sizeStep, maxIteration) {
       if (dividedItems.some(e => e === false)) {
         comeBackItems()
       } else {
-        updateInfoPartsAC(uniqItems)
+        dividedItems = updateInfoParts(uniqItems, dividedItems)
         putItems()
       }
       countIteration = 0
