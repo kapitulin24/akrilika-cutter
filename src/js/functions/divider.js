@@ -1,12 +1,12 @@
 import {fillRectAC, findUnusedSpaceAC} from "../store/actionCreators"
 import decreaseSort from "./decreaseSort"
 
-function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, length) {
+function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, length, unusedSpaceSymbol) {
   const result = []
   let unusedRectAll = null
 
-  while (items.length) {
-    let maxPart, parts = [false]
+  for (const currRect of items) {
+    let maxPart, parts = false
 
     //ищем свободные простанства
     const findUnusedAll = () => {
@@ -14,9 +14,10 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, len
       for (let plate = 0; plate < plates.length; plate++) {
         unusedRectAll.push(...findUnusedSpaceAC(plate, true))
       }
+      filterUnused()
     }
 
-    const filterUnusedAll = () => {
+    const filterUnused = () => {
       unusedRectAll = decreaseSort(unusedRectAll.filter(space => {
         if (space.h >= currRect.h + eh && space.w >= minPart) {
           return true
@@ -31,9 +32,20 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, len
       unusedRectAll.push({w: 0})
     }
 
-//поиск оптимальных частей на которые можно разделить изделие
+    const rectsToBack = (res) => {
+      res.forEach(e => fillRectAC({
+        x: e.x, w: e.w, y: e.y, h: e.h,
+        rotate: e.rotate,
+        value: unusedSpaceSymbol,
+        index: e.fromPlate
+      }))
+    }
+
+    //поиск оптимальных частей на которые можно разделить изделие
     const findParts = (limit = Math.round(length / 2)) => {
       let summ = 0, res = []
+
+      findUnusedAll()
 
       if (res.length < maxPart) {
         for (let i = 0; i < unusedRectAll.length - 1; i++) {
@@ -61,7 +73,7 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, len
                   w += res[i].w - minPart
                   res[i].w = minPart
                 }
-                if (i === 0) return [false] //если невозможно возвращаем false
+                if (i === 0) return false //если невозможно возвращаем false
               }
             }
 
@@ -83,7 +95,7 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, len
               }
             }
             unusedRectAll.push(...findUnusedSpaceAC(index, true))
-            filterUnusedAll()
+            filterUnused()
             i = -1
           }
 
@@ -93,19 +105,14 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, len
       }
 
       if (summ < currRect.w && limit < length) {//если не нашли нужную сумму с лимитом, то пробуем без него
+        rectsToBack(res)
         return findParts(length)
-      } else if (summ < currRect.w) {//иначе если просто не нашли нужную сумму возвращаем входной элемент
-        return [false]
+      } else if (summ < currRect.w) {//иначе если просто не нашли нужную сумму
+        return false
       }
 
       return res
     }
-
-    //первый элемент тот что больше заготовки, он всегда самый длинный
-    const currRect = items[0]
-    /*валидация сразу предусматривает что тут не будут заготовки которые невозможно разделить
-      на нужное количество стыков, поэтому можно сразу удалить*/
-    items.splice(0, 1)
 
     //если объекты уже нельзя будет разделить то возможно они будут перемещены
     maxPart = maxStack + 2 - currRect.parts
@@ -113,10 +120,12 @@ function divider(plates, minPart, rotate, eh, maxStack, divideSymbol, items, len
     //повернутый элемент поворачиваем обратно
     if (currRect && currRect.rotate) currRect.rotate = false
 
-    findUnusedAll()
-    filterUnusedAll()
-
     parts = findParts()
+
+    if (parts === false) {
+      rectsToBack(result)
+      return false
+    }
 
     result.push(...parts)
   }

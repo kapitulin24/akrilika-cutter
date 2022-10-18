@@ -1,20 +1,7 @@
 import {
-  addItemsToPlateAC,
-  createNewPlateAC,
-  deletePartItemAC,
-  fillRectAC,
-  findUnusedSpaceAC,
-  calcCurrentLengthAC,
-  getCurrentIndexPlateAC,
-  getMaxX1AC,
-  getPartItemAC,
-  getPartsLengthAC,
-  getPlateItemsLengthAC,
-  getPlatesLengthAC,
-  getUnusedSpaceItemAC,
-  getUnusedSpaceLengthAC,
-  nextIndexPlateAC,
-  reverseUnusedSpaceAC
+  addItemToPlateAC, createNewPlateAC, deletePartItemAC, findUnusedSpaceAC, calcCurrentLengthAC,
+  getCurrentIndexPlateAC, getMaxX1AC, getPartItemAC, getPartsLengthAC, getPlateItemsLengthAC,
+  getPlatesLengthAC, getUnusedSpaceItemAC, getUnusedSpaceLengthAC, nextIndexPlateAC, reverseUnusedSpaceAC
 } from "../store/actionCreators"
 import exceedingIterations from "./exceedingIterations"
 
@@ -49,8 +36,7 @@ function basicPositioning(isRotate, maxIteration, eh, length) {
 
           if (isRotate && isVertical && !obj.rotate) obj.rotate = true
 
-          addItemsToPlateAC(fromPlate, obj)
-          fillRectAC({x: obj.x, w: obj.w, y: obj.y, h: obj.h, rotate: obj.rotate})
+          addItemToPlateAC(fromPlate, obj)
           deletePartItemAC(rect)
           //обновляем неиспользуемые пространства
           findUnusedSpaceAC()

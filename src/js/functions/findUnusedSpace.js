@@ -55,7 +55,7 @@ function findUnusedSpace(minPart, plates, height, symbols, index = getCurrentInd
 
   //ищем не занятое пространство
   for (let y = 0; y < height; y++) {
-    for (let x = 0; x < length; x+= step) {
+    for (let x = 0; x < length; x += step) {
       if (arr[y][x] !== symbols.rect && arr[y][x] !== spaceSymbol && arr[y][x] !== divideSymbol) {
         x = findIndex(arr[y], x, y, step)
         const {h, y: topY} = findEndY(x, y),

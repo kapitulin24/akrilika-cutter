@@ -3,7 +3,7 @@ import {
   ADD_STATE_DATA, CALC_COUNT_PART, CALC_SIZE_STEP, CALC_SUMM_EDGE_HEM, CREATE_NEW_PLATE, EXTRACT_PARTS,
   CALC_CURRENT_LENGTH, GET_PARTS_LENGTH, INITIAL_STATE, IS_CUT, PREPARE_CONFIG_DATA, PUSH_NEW_PLATE,
   SET_NEW_LENGTH_PLATE, VALIDATE_CONFIG_DATA, GET_MAX_X1, REVERSE_UNUSED_SPACE, GET_UNUSED_SPACE_LENGTH,
-  GET_UNUSED_SPACE_ITEM, GET_PART_ITEM, ADD_ITEMS_TO_PLATE, FILL_RECT, GET_PLATE_ITEMS_LENGTH, FIND_UNUSED_SPACE,
+  GET_UNUSED_SPACE_ITEM, GET_PART_ITEM, ADD_ITEM_TO_PLATE, FILL_RECT, GET_PLATE_ITEMS_LENGTH, FIND_UNUSED_SPACE,
   GET_PLATES_LENGTH, NEXT_INDEX_PLATE, DELETE_PART_ITEM, SET_NEW_UNUSED_SPACE, GET_STATE, SELECT_ITEMS_OF_LAST_PART,
   GET_CURRENT_INDEX_PLATE, GET_PLATE_ITEM, DELETE_PLATE_ITEM, GET_PLATE_LENGTH, UPDATE_PART_NAME,
   UPDATE_PARTS_INFO_IN_PLATE, DELETE_LAST_PLATE, DIVIDER, DIVISION_OF_PRODUCTS, BASIC_POSITIONING
@@ -27,7 +27,7 @@ export const nextIndexPlateAC = () => dispatch({type: NEXT_INDEX_PLATE})
 export const createNewPlateAC = () => dispatch({type: CREATE_NEW_PLATE})
 export const pushNewPlateAC = (plate) => dispatch({type: PUSH_NEW_PLATE, plate})
 export const setNewLengthPlateAC = (plate, length) => dispatch({type: SET_NEW_LENGTH_PLATE, plate, length})
-export const addItemsToPlateAC = (plateIdx, items) => dispatch({type: ADD_ITEMS_TO_PLATE, plateIdx, items})
+export const addItemToPlateAC = (plateIdx, item) => dispatch({type: ADD_ITEM_TO_PLATE, plateIdx, item})
 export const deletePlateItemAC = (plateIdx, itemIdx) => dispatch({type: DELETE_PLATE_ITEM, plateIdx, itemIdx})
 export const getPlateItemsLengthAC = (plate) => dispatch({type: GET_PLATE_ITEMS_LENGTH, plate})
 export const getPlatesLengthAC = () => dispatch({type: GET_PLATES_LENGTH})
@@ -45,7 +45,7 @@ export const getPartItemAC = (item) => dispatch({type: GET_PART_ITEM, item})
 export const fillRectAC = (param) => dispatch({type: FILL_RECT, param})
 export const deletePartItemAC = (index) => dispatch({type: DELETE_PART_ITEM, index})
 export const setNewUnusedSpaceAC = (plate, value) => dispatch({type: SET_NEW_UNUSED_SPACE, plate, value})
-export const selectItemsOfLastPartAC = () => dispatch({type: SELECT_ITEMS_OF_LAST_PART})
+export const selectItemsOfLastPartAC = (index) => dispatch({type: SELECT_ITEMS_OF_LAST_PART, index})
 export const updatePartNameAC = (partItemOrName, part) => dispatch({type: UPDATE_PART_NAME, partItemOrName, part})
 export const updatePartsInfoInPlateAC = (id, startPart, parts) => dispatch({type: UPDATE_PARTS_INFO_IN_PLATE, id, startPart, parts})
 export const deleteLastPlateAC = () => dispatch({type: DELETE_LAST_PLATE})

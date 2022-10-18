@@ -1,9 +1,6 @@
 //выделить из последнего листа элменты из его части
 import {
-  deletePlateItemAC,
-  fillRectAC,
-  getPlateItemAC,
-  getPlateItemsLengthAC,
+  deletePlateItemAC, fillRectAC, findUnusedSpaceAC, getPlateItemAC, getPlateItemsLengthAC, setNewLengthPlateAC,
 } from "../store/actionCreators"
 
 function selectItemsOfLastPart(length, sizeStep, countPart, index, eh) {
@@ -25,7 +22,10 @@ function selectItemsOfLastPart(length, sizeStep, countPart, index, eh) {
     else emptyParts++
   }
 
-  return {items: res.length ? res : false, emptyParts: ++emptyParts}
+  setNewLengthPlateAC(index, length - (sizeStep * ++emptyParts))
+  findUnusedSpaceAC(index)
+
+  return res.length ? res : false
 }
 
 export default selectItemsOfLastPart

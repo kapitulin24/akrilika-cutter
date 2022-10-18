@@ -2,7 +2,7 @@ import rndID from "./rndID"
 import decreaseSort from "./decreaseSort"
 
 function extractParts(parts, name, length, partName, nameIsPrefix, minPart) {
-  const result = []
+  let result = [], tResult = []
 
   //раскукоживаем
   parts.forEach((rect, i) => {
@@ -19,13 +19,24 @@ function extractParts(parts, name, length, partName, nameIsPrefix, minPart) {
       for (let i = 0, part = 1; i < rect.length; i += length, part++) {
         const name = baseName + (parts > 1 ? ` ${partName} ${part}` : ''),
               width = part === 1 ? w + difference : part === 2 ? length - difference : length
-        result.push({...rect, name, w: width, h, id, part, parts})
+        tResult.push({...rect, name, w: width, h, id, part, parts, rotate: false})
       }
     }
   })
 
-  //сортировка раскукоженного по убыванию ширины
-  return decreaseSort(result)
+  //группировка одинаковых ширин
+  tResult = tResult.reduce((acc, el) => {
+    acc[el.w] = acc[el.w] ? [...acc[el.w], el] : [el]
+    return acc
+  }, {})
+
+  //сортировка по убыванию высоты в каждой группе ширины
+  Object.keys(tResult).forEach(item => tResult[item].length > 1 && decreaseSort(tResult[item], 'h'))
+
+  //сортировка по убыванию ширины
+  decreaseSort(Object.keys(tResult), false).forEach(e => result.push(...tResult[e]))
+
+  return result
 }
 
 export default extractParts

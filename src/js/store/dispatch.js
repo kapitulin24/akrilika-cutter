@@ -1,6 +1,6 @@
 import store from "./store"
 import {
-  ADD_ITEMS_TO_PLATE, ADD_STATE_DATA, CALC_COUNT_PART, CALC_SIZE_STEP, CALC_SUMM_EDGE_HEM, CREATE_NEW_PLATE,
+  ADD_ITEM_TO_PLATE, ADD_STATE_DATA, CALC_COUNT_PART, CALC_SIZE_STEP, CALC_SUMM_EDGE_HEM, CREATE_NEW_PLATE,
   DELETE_PART_ITEM, EXTRACT_PARTS, FILL_RECT, FIND_UNUSED_SPACE, CALC_CURRENT_LENGTH, GET_MAX_X1, GET_PART_ITEM,
   GET_PARTS_LENGTH, GET_PLATE_ITEMS_LENGTH, GET_STATE, GET_PLATES_LENGTH, GET_UNUSED_SPACE_ITEM,
   GET_UNUSED_SPACE_LENGTH, INITIAL_STATE, IS_CUT, NEXT_INDEX_PLATE, PREPARE_CONFIG_DATA, PUSH_NEW_PLATE,
@@ -18,14 +18,14 @@ import selectItemsOfLastPart from "../functions/selectItemsOfLastPart"
 import updatePartName from "../functions/updatePartName"
 import {divider} from "../functions/divider"
 import divisionOfProducts from "../functions/divisionOfProducts"
-import {updatePartNameAC} from "./actionCreators"
+import {fillRectAC, updatePartNameAC} from "./actionCreators"
 import basicPositioning from "../functions/basicPositioning"
 
 function dispatch(action) {
   const state = store.getState(),
     cnf = state.config
 
-  const getIndexPLate = () => action.plate || state.currentIndexPlate
+  const getIndexPLate = () => action.plate >= 0 ? action.plate : state.currentIndexPlate
 
   switch (action.type) {
     //region PREPARE DATA
@@ -74,13 +74,13 @@ function dispatch(action) {
       return cnf.cut
     }
     case DIVIDER: {
-      return divider(state.plates, cnf.minPart, cnf.rotate, state.eh, cnf.maxStack, state.symbols.divide, action.items, cnf.length)
+      return divider(state.plates, cnf.minPart, cnf.rotate, state.eh, cnf.maxStack, state.symbols.divide, action.items, cnf.length, state.symbols.unusedSpace)
     }
     case BASIC_POSITIONING: {
       return basicPositioning(cnf.rotate, state.maxIteration, state.eh, cnf.length)
     }
     case DIVISION_OF_PRODUCTS: {
-      return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration, state.eh, cnf.height)
+      return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration, cnf.height, state.symbols.unusedSpace)
     }
     case PUSH_NEW_PLATE: {
       //пушим новый лист
@@ -124,9 +124,10 @@ function dispatch(action) {
     case GET_UNUSED_SPACE_ITEM: {
       return {...state.plates[getIndexPLate()].unusedSpace[action.item]}
     }
-    case ADD_ITEMS_TO_PLATE: {
-      if (!Array.isArray(action.items)) action.items = [action.items]
-      return state.plates[action.plateIdx].items.push(...action.items)
+    case ADD_ITEM_TO_PLATE: {
+      const {x, w, y, h, rotate, fromPlate: index} = action.item
+      fillRectAC({x, w, y, h, rotate, index})
+      return state.plates[action.plateIdx].items.push(action.item)
     }
     case FILL_RECT: {
       //добавить прямоугольник в матрицу
@@ -173,7 +174,7 @@ function dispatch(action) {
       return state.plates[action.plateIdx].length
     }
     case SELECT_ITEMS_OF_LAST_PART: {
-      return selectItemsOfLastPart(cnf.length, state.sizeStep, state.countPart, state.plates.length - 1, state.eh)
+      return selectItemsOfLastPart(cnf.length, state.sizeStep, state.countPart, action.index, state.eh)
     }
     case UPDATE_PART_NAME: {
       return updatePartName(cnf.partName, action.partItemOrName, action.part)
