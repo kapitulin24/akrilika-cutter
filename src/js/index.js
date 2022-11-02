@@ -36,7 +36,7 @@ function calc(e) {
   const cut = cutter(data),
     errorsBlock = document.querySelector('#errors')
 
-  document.querySelector('#time').innerText = `${cut.time} cек.`
+  document.querySelector('#time').innerText = `${cut.statistic.time} cек. ${cut.statistic.countOfParts} частей. ${cut.statistic.countOfPlates} листов.  ${cut.statistic.totalLength}мм общая длина.`
   errorsBlock.innerHTML = ''
 
   if (cut.errors.length) {

@@ -1,5 +1,5 @@
 //создать новый лист
-import {findUnusedSpaceAC, calcCurrentLengthAC, pushNewPlateAC, setNewLengthPlateAC} from "../store/actionCreators"
+import {calcCurrentLengthAC, pushNewPlateAC, setNewLengthPlateAC} from "../store/actionCreators"
 
 function createNewPlate(plates, length, height, startSpaceSymbol, unusedSpaceSymbol) {
   let lastPlate = plates.length - 1, isCreated, newLength

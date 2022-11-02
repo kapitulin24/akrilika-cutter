@@ -1,7 +1,6 @@
 import store from "./store"
 import {
   ADD_ITEM_TO_PLATE,
-  ADD_STATE_DATA,
   CALC_COUNT_PART,
   CALC_SIZE_STEP,
   CALC_SUMM_EDGE_HEM,
@@ -40,7 +39,9 @@ import {
   DIVISION_OF_PRODUCTS,
   BASIC_POSITIONING,
   GET_OPTIMIZATION_LEVEL,
-  GET_LENGTH
+  ADD_STATISTIC,
+  GET_CONFIG_DATA,
+  GET_UNUSED_PARTS
 } from './actions'
 import validation from "../functions/validation"
 import prepareConfig from "../functions/prepareConfig"
@@ -52,7 +53,7 @@ import selectItemsOfLastPart from "../functions/selectItemsOfLastPart"
 import updatePartName from "../functions/updatePartName"
 import {divider} from "../functions/divider"
 import divisionOfProducts from "../functions/divisionOfProducts"
-import {fillRectAC, findUnusedSpaceAC, updatePartNameAC} from './actionCreators'
+import {calcCurrentLengthAC, fillRectAC, findUnusedSpaceAC, updatePartNameAC} from './actionCreators'
 import basicPositioning from "../functions/basicPositioning"
 
 function dispatch(action) {
@@ -84,10 +85,6 @@ function dispatch(action) {
       //извлечь изделия с некоторыми преобразованиями
       return store.setState({parts: extractParts(cnf.parts, cnf.name, cnf.length, cnf.partName, cnf.nameIsPrefix, cnf.minPart)})
     }
-    case ADD_STATE_DATA: {
-      //добавить данные в стейт
-      return store.setState(action.data)
-    }
     case CALC_SIZE_STEP: {
       //кратность листа в линейном выражении
       return store.setState({sizeStep: cnf.length * cnf.step})
@@ -99,6 +96,20 @@ function dispatch(action) {
     case CALC_SUMM_EDGE_HEM: {
       //сумма кромка + подгиб для удобства
       return store.setState({eh: cnf.edge + cnf.hem})
+    }
+    case GET_CONFIG_DATA: {
+      //данные конфига
+      return cnf[action.key] || cnf
+    }
+    case ADD_STATISTIC: {
+      //добавить статистику
+      if (typeof action.obj !== 'object') throw new Error('object error')
+
+      const statistic = {
+        ...state.statistic,
+        ...action.obj
+      }
+      return store.setState({statistic})
     }
     //endregion PREPARE DATA
 
@@ -158,6 +169,22 @@ function dispatch(action) {
     case GET_MAX_X1: {
       return Math.max(...state.plates[getIndexPLate()].items.map(e => e.x + e.w), 0)
     }
+    case GET_UNUSED_PARTS: {
+      let length
+      if (state.plates[action.plate].length === cnf.length) {
+        let maxUnused = null
+        state.plates[action.plate].unusedSpace.forEach(e => {
+          if (!maxUnused || (e.h === cnf.height && maxUnused.x < e.x)) {
+            maxUnused = e
+          }
+        })
+        length = calcCurrentLengthAC(maxUnused.x, 'ceil')
+      } else {
+        length = state.plates[action.plate].length
+      }
+
+      return Math.round(length / state.sizeStep)
+    }
     case REVERSE_UNUSED_SPACE: {
       return state.plates[getIndexPLate()].unusedSpace.reverse()
     }
@@ -200,9 +227,6 @@ function dispatch(action) {
     }
     case GET_PLATES_LENGTH: {
       return state.plates.length
-    }
-    case GET_LENGTH: {
-      return cnf.length
     }
     case NEXT_INDEX_PLATE: {
       return ++state.currentIndexPlate

@@ -1,6 +1,5 @@
 import dispatch from "./dispatch"
 import {
-  ADD_STATE_DATA,
   CALC_COUNT_PART,
   CALC_SIZE_STEP,
   CALC_SUMM_EDGE_HEM,
@@ -40,7 +39,9 @@ import {
   DIVISION_OF_PRODUCTS,
   BASIC_POSITIONING,
   GET_OPTIMIZATION_LEVEL,
-  GET_LENGTH
+  ADD_STATISTIC,
+  GET_CONFIG_DATA,
+  GET_UNUSED_PARTS
 } from './actions'
 
 //region PREPARE DATA
@@ -49,7 +50,6 @@ export const getStateAC = () => dispatch({type: GET_STATE})
 export const validateConfigDataAC = (config) => dispatch({type: VALIDATE_CONFIG_DATA, config})
 export const prepareConfigDataAC = (config) => dispatch({type: PREPARE_CONFIG_DATA, config})
 export const extractPartsAC = () => dispatch({type: EXTRACT_PARTS})
-export const addStateDataAC = (data) => dispatch({type: ADD_STATE_DATA, data})
 export const calcSizeStepAC = () => dispatch({type: CALC_SIZE_STEP})
 export const calcCountPartAC = () => dispatch({type: CALC_COUNT_PART})
 export const calcSummEdgeHemAC = () => dispatch({type: CALC_SUMM_EDGE_HEM})
@@ -87,5 +87,7 @@ export const dividerAC = (items) => dispatch({type: DIVIDER, items})
 export const divisionOfProductsAC = () => dispatch({type: DIVISION_OF_PRODUCTS})
 export const basicPositioningAC = () => dispatch({type: BASIC_POSITIONING})
 export const getOptimizationLevelAC = () => dispatch({type: GET_OPTIMIZATION_LEVEL})
-export const getLengthAC = () => dispatch({type: GET_LENGTH})
+export const addStatisticAC = (obj) => dispatch({type: ADD_STATISTIC, obj})
+export const getConfigDataAC = (key) => dispatch({type: GET_CONFIG_DATA, key})
+export const getUnusedPartsAC = (plate) => dispatch({type: GET_UNUSED_PARTS, plate})
 //endregion CALCULATION

@@ -1,19 +1,18 @@
 'use strict'
 
 import {
-  addStateDataAC,
+  addStatisticAC,
   basicPositioningAC,
   calcCountPartAC,
   calcSizeStepAC,
   calcSummEdgeHemAC,
   createNewPlateAC,
   divisionOfProductsAC,
-  extractPartsAC,
-  getLengthAC,
+  extractPartsAC, getConfigDataAC,
   getOptimizationLevelAC,
   getPlateLengthAC,
   getPlatesLengthAC,
-  getStateAC,
+  getStateAC, getUnusedPartsAC,
   isCutAC,
   prepareConfigDataAC,
   setNewLengthPlateAC,
@@ -68,7 +67,7 @@ export function cutter(param) {
     //уровень оптимизации
     for (let i = 0; i < getOptimizationLevelAC(); i++) {
       for (let j = 0; j < getPlatesLengthAC() - 1; j++) {
-        const length = getLengthAC()
+        const length = getConfigDataAC('length')
         if (getPlateLengthAC(j) < length) {
           setNewLengthPlateAC(j, length)
         }
@@ -78,7 +77,22 @@ export function cutter(param) {
   }
   //endregion CALCULATE
 
-  addStateDataAC({time: (new Date().getTime() - startTime) * 1e-3})
+  //region STATISTIC
+  let countOfParts = 0, totalLength = 0, countOfPlates = getPlatesLengthAC()
+
+  for (let i = 0; i < countOfPlates; i++) {
+    const parts = getUnusedPartsAC(i)
+    countOfParts += parts
+    totalLength += parts * getStateAC().sizeStep
+  }
+
+  addStatisticAC({
+    countOfParts,
+    totalLength,
+    countOfPlates,
+    time: (new Date().getTime() - startTime) * 1e-3
+  })
+  //endregion STATISTIC
 
   return getStateAC()
 }

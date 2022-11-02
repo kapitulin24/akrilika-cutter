@@ -1,6 +1,6 @@
 //выделить из последнего листа элменты из его части
 import {
-  deletePlateItemAC, fillRectAC, findUnusedSpaceAC, getPlateItemAC, getPlateItemsLengthAC, setNewLengthPlateAC,
+  deletePlateItemAC, fillRectAC, getPlateItemAC, getPlateItemsLengthAC, setNewLengthPlateAC,
 } from "../store/actionCreators"
 
 function selectItemsOfLastPart(length, sizeStep, countPart, index, eh) {

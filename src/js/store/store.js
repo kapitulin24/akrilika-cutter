@@ -2,7 +2,6 @@ const initialState = {
   config: {},
   parts: [],
   plates: [],
-  time: 0,
   errors: null,
   currentIndexPlate: 0,
   symbols: {
@@ -12,6 +11,7 @@ const initialState = {
     alternateSpace: 3,
     divide: 4
   },
+  statistic: {},
   sizeStep: null,
   countPart: null,
   eh: null,
