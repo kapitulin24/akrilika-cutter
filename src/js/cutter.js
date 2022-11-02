@@ -1,14 +1,25 @@
 'use strict'
 
 import {
-  addStateDataAC, basicPositioningAC,
+  addStateDataAC,
+  basicPositioningAC,
   calcCountPartAC,
   calcSizeStepAC,
-  calcSummEdgeHemAC, createNewPlateAC, divisionOfProductsAC,
-  extractPartsAC, getStateAC, isCutAC,
-  prepareConfigDataAC, stateInitAC,
+  calcSummEdgeHemAC,
+  createNewPlateAC,
+  divisionOfProductsAC,
+  extractPartsAC,
+  getLengthAC,
+  getOptimizationLevelAC,
+  getPlateLengthAC,
+  getPlatesLengthAC,
+  getStateAC,
+  isCutAC,
+  prepareConfigDataAC,
+  setNewLengthPlateAC,
+  stateInitAC,
   validateConfigDataAC
-} from "./store/actionCreators"
+} from './store/actionCreators'
 
 export function cutter(param) {
   const startTime = new Date().getTime()
@@ -26,6 +37,7 @@ export function cutter(param) {
     step: 0.25,
     minPart: 12,
     maxStack: 1,
+    optimization: 2,
     edge: 40,
     hem: 40,
     ...param
@@ -53,7 +65,16 @@ export function cutter(param) {
   createNewPlateAC()
   basicPositioningAC()
   if (isCutAC()) {
-    divisionOfProductsAC()
+    //уровень оптимизации
+    for (let i = 0; i < getOptimizationLevelAC(); i++) {
+      for (let j = 0; j < getPlatesLengthAC() - 1; j++) {
+        const length = getLengthAC()
+        if (getPlateLengthAC(j) < length) {
+          setNewLengthPlateAC(j, length)
+        }
+      }
+      divisionOfProductsAC()
+    }
   }
   //endregion CALCULATE
 

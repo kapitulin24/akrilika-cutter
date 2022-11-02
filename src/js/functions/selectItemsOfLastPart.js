@@ -23,7 +23,6 @@ function selectItemsOfLastPart(length, sizeStep, countPart, index, eh) {
   }
 
   setNewLengthPlateAC(index, length - (sizeStep * ++emptyParts))
-  findUnusedSpaceAC(index)
 
   return res.length ? res : false
 }

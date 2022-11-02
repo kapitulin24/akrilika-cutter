@@ -1,13 +1,47 @@
 import dispatch from "./dispatch"
 import {
-  ADD_STATE_DATA, CALC_COUNT_PART, CALC_SIZE_STEP, CALC_SUMM_EDGE_HEM, CREATE_NEW_PLATE, EXTRACT_PARTS,
-  CALC_CURRENT_LENGTH, GET_PARTS_LENGTH, INITIAL_STATE, IS_CUT, PREPARE_CONFIG_DATA, PUSH_NEW_PLATE,
-  SET_NEW_LENGTH_PLATE, VALIDATE_CONFIG_DATA, GET_MAX_X1, REVERSE_UNUSED_SPACE, GET_UNUSED_SPACE_LENGTH,
-  GET_UNUSED_SPACE_ITEM, GET_PART_ITEM, ADD_ITEM_TO_PLATE, FILL_RECT, GET_PLATE_ITEMS_LENGTH, FIND_UNUSED_SPACE,
-  GET_PLATES_LENGTH, NEXT_INDEX_PLATE, DELETE_PART_ITEM, SET_NEW_UNUSED_SPACE, GET_STATE, SELECT_ITEMS_OF_LAST_PART,
-  GET_CURRENT_INDEX_PLATE, GET_PLATE_ITEM, DELETE_PLATE_ITEM, GET_PLATE_LENGTH, UPDATE_PART_NAME,
-  UPDATE_PARTS_INFO_IN_PLATE, DELETE_LAST_PLATE, DIVIDER, DIVISION_OF_PRODUCTS, BASIC_POSITIONING
-} from "./actions"
+  ADD_STATE_DATA,
+  CALC_COUNT_PART,
+  CALC_SIZE_STEP,
+  CALC_SUMM_EDGE_HEM,
+  CREATE_NEW_PLATE,
+  EXTRACT_PARTS,
+  CALC_CURRENT_LENGTH,
+  GET_PARTS_LENGTH,
+  INITIAL_STATE,
+  IS_CUT,
+  PREPARE_CONFIG_DATA,
+  PUSH_NEW_PLATE,
+  SET_NEW_LENGTH_PLATE,
+  VALIDATE_CONFIG_DATA,
+  GET_MAX_X1,
+  REVERSE_UNUSED_SPACE,
+  GET_UNUSED_SPACE_LENGTH,
+  GET_UNUSED_SPACE_ITEM,
+  GET_PART_ITEM,
+  ADD_ITEM_TO_PLATE,
+  FILL_RECT,
+  GET_PLATE_ITEMS_LENGTH,
+  FIND_UNUSED_SPACE,
+  GET_PLATES_LENGTH,
+  NEXT_INDEX_PLATE,
+  DELETE_PART_ITEM,
+  SET_NEW_UNUSED_SPACE,
+  GET_STATE,
+  SELECT_ITEMS_OF_LAST_PART,
+  GET_CURRENT_INDEX_PLATE,
+  GET_PLATE_ITEM,
+  DELETE_PLATE_ITEM,
+  GET_PLATE_LENGTH,
+  UPDATE_PART_NAME,
+  UPDATE_PARTS_INFO_IN_PLATE,
+  DELETE_LAST_PLATE,
+  DIVIDER,
+  DIVISION_OF_PRODUCTS,
+  BASIC_POSITIONING,
+  GET_OPTIMIZATION_LEVEL,
+  GET_LENGTH
+} from './actions'
 
 //region PREPARE DATA
 export const stateInitAC = () => dispatch({type: INITIAL_STATE})
@@ -26,7 +60,7 @@ export const getCurrentIndexPlateAC = () => dispatch({type: GET_CURRENT_INDEX_PL
 export const nextIndexPlateAC = () => dispatch({type: NEXT_INDEX_PLATE})
 export const createNewPlateAC = () => dispatch({type: CREATE_NEW_PLATE})
 export const pushNewPlateAC = (plate) => dispatch({type: PUSH_NEW_PLATE, plate})
-export const setNewLengthPlateAC = (plate, length) => dispatch({type: SET_NEW_LENGTH_PLATE, plate, length})
+export const setNewLengthPlateAC = (plate, length, cb = () => {}) => dispatch({type: SET_NEW_LENGTH_PLATE, plate, length, cb})
 export const addItemToPlateAC = (plateIdx, item) => dispatch({type: ADD_ITEM_TO_PLATE, plateIdx, item})
 export const deletePlateItemAC = (plateIdx, itemIdx) => dispatch({type: DELETE_PLATE_ITEM, plateIdx, itemIdx})
 export const getPlateItemsLengthAC = (plate) => dispatch({type: GET_PLATE_ITEMS_LENGTH, plate})
@@ -52,4 +86,6 @@ export const deleteLastPlateAC = () => dispatch({type: DELETE_LAST_PLATE})
 export const dividerAC = (items) => dispatch({type: DIVIDER, items})
 export const divisionOfProductsAC = () => dispatch({type: DIVISION_OF_PRODUCTS})
 export const basicPositioningAC = () => dispatch({type: BASIC_POSITIONING})
+export const getOptimizationLevelAC = () => dispatch({type: GET_OPTIMIZATION_LEVEL})
+export const getLengthAC = () => dispatch({type: GET_LENGTH})
 //endregion CALCULATION

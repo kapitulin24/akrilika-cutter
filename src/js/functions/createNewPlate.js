@@ -24,7 +24,6 @@ function createNewPlate(plates, length, height, startSpaceSymbol, unusedSpaceSym
     }
 
     setNewLengthPlateAC(lastPlate, newLength)
-    findUnusedSpaceAC(lastPlate)
     isCreated = false
   }
 

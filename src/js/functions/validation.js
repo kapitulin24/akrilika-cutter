@@ -13,6 +13,9 @@ function validation(data) {
   if (data.maxStack < 0 || !Number.isInteger(data.maxStack)) {
     errors.push(`Max Stack is not valid (${data.maxStack})`)
   }
+  if (data.optimization < 0 || !Number.isInteger(data.optimization) || data.optimization > 10) {
+    errors.push(`Optimization level is not valid or > 10 (${data.maxStack})`)
+  }
   const notValidElements = data.parts.filter(part => {
     return part.length > data.length * (data.maxStack + 1)
       || part.height > data.height

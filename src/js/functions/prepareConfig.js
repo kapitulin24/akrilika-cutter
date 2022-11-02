@@ -9,6 +9,7 @@ function prepareConfig(data) {
     hem: +data.hem,
     minPart: +data.minPart,
     maxStack: +data.maxStack,
+    optimization: +data.optimization,
     parts: data.parts.map(e => ({
       ...e,
       name: e.name,

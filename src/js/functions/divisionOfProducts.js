@@ -20,10 +20,11 @@ function divisionOfProducts(length, sizeStep, maxIteration, height, unusedSpaceS
         }, {}),
         comeBackItems = () => {
         const x = getPlateLengthAC(lastPlateIndex)
-          setNewLengthPlateAC(lastPlateIndex, x + sizeStep)
-          fillRectAC({x, y: 0, w: sizeStep, h: height, value: unusedSpaceSymbol, index: lastPlateIndex, space: true})
-          parts.forEach(item => addItemToPlateAC(lastPlateIndex, item))
-          findUnusedSpaceAC(lastPlateIndex) //items всегда с одного листа
+          const cb = () => {
+            fillRectAC({x, y: 0, w: sizeStep, h: height, value: unusedSpaceSymbol, index: lastPlateIndex, space: true})
+            parts.forEach(item => addItemToPlateAC(lastPlateIndex, item))
+          }
+          setNewLengthPlateAC(lastPlateIndex, x + sizeStep, cb)
           lastPlateIndex--
         },
         putItems = () => {

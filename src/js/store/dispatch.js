@@ -1,13 +1,47 @@
 import store from "./store"
 import {
-  ADD_ITEM_TO_PLATE, ADD_STATE_DATA, CALC_COUNT_PART, CALC_SIZE_STEP, CALC_SUMM_EDGE_HEM, CREATE_NEW_PLATE,
-  DELETE_PART_ITEM, EXTRACT_PARTS, FILL_RECT, FIND_UNUSED_SPACE, CALC_CURRENT_LENGTH, GET_MAX_X1, GET_PART_ITEM,
-  GET_PARTS_LENGTH, GET_PLATE_ITEMS_LENGTH, GET_STATE, GET_PLATES_LENGTH, GET_UNUSED_SPACE_ITEM,
-  GET_UNUSED_SPACE_LENGTH, INITIAL_STATE, IS_CUT, NEXT_INDEX_PLATE, PREPARE_CONFIG_DATA, PUSH_NEW_PLATE,
-  REVERSE_UNUSED_SPACE, SELECT_ITEMS_OF_LAST_PART, SET_NEW_LENGTH_PLATE, SET_NEW_UNUSED_SPACE, VALIDATE_CONFIG_DATA,
-  GET_CURRENT_INDEX_PLATE, GET_PLATE_ITEM, DELETE_PLATE_ITEM, GET_PLATE_LENGTH, UPDATE_PART_NAME,
-  UPDATE_PARTS_INFO_IN_PLATE, DELETE_LAST_PLATE, DIVIDER, DIVISION_OF_PRODUCTS, BASIC_POSITIONING
-} from "./actions"
+  ADD_ITEM_TO_PLATE,
+  ADD_STATE_DATA,
+  CALC_COUNT_PART,
+  CALC_SIZE_STEP,
+  CALC_SUMM_EDGE_HEM,
+  CREATE_NEW_PLATE,
+  DELETE_PART_ITEM,
+  EXTRACT_PARTS,
+  FILL_RECT,
+  FIND_UNUSED_SPACE,
+  CALC_CURRENT_LENGTH,
+  GET_MAX_X1,
+  GET_PART_ITEM,
+  GET_PARTS_LENGTH,
+  GET_PLATE_ITEMS_LENGTH,
+  GET_STATE,
+  GET_PLATES_LENGTH,
+  GET_UNUSED_SPACE_ITEM,
+  GET_UNUSED_SPACE_LENGTH,
+  INITIAL_STATE,
+  IS_CUT,
+  NEXT_INDEX_PLATE,
+  PREPARE_CONFIG_DATA,
+  PUSH_NEW_PLATE,
+  REVERSE_UNUSED_SPACE,
+  SELECT_ITEMS_OF_LAST_PART,
+  SET_NEW_LENGTH_PLATE,
+  SET_NEW_UNUSED_SPACE,
+  VALIDATE_CONFIG_DATA,
+  GET_CURRENT_INDEX_PLATE,
+  GET_PLATE_ITEM,
+  DELETE_PLATE_ITEM,
+  GET_PLATE_LENGTH,
+  UPDATE_PART_NAME,
+  UPDATE_PARTS_INFO_IN_PLATE,
+  DELETE_LAST_PLATE,
+  DIVIDER,
+  DIVISION_OF_PRODUCTS,
+  BASIC_POSITIONING,
+  GET_OPTIMIZATION_LEVEL,
+  GET_LENGTH
+} from './actions'
 import validation from "../functions/validation"
 import prepareConfig from "../functions/prepareConfig"
 import extractParts from "../functions/extractParts"
@@ -18,7 +52,7 @@ import selectItemsOfLastPart from "../functions/selectItemsOfLastPart"
 import updatePartName from "../functions/updatePartName"
 import {divider} from "../functions/divider"
 import divisionOfProducts from "../functions/divisionOfProducts"
-import {fillRectAC, updatePartNameAC} from "./actionCreators"
+import {fillRectAC, findUnusedSpaceAC, updatePartNameAC} from './actionCreators'
 import basicPositioning from "../functions/basicPositioning"
 
 function dispatch(action) {
@@ -96,7 +130,12 @@ function dispatch(action) {
     }
     case SET_NEW_LENGTH_PLATE: {
       //изменить длину листа
-      return state.plates[action.plate].length = action.length
+      if (typeof action.cb !== 'function') throw new Error('cb is not a function')
+
+      const length = state.plates[action.plate].length = action.length
+      action.cb()
+      findUnusedSpaceAC(action.plate)
+      return length
     }
     case GET_CURRENT_INDEX_PLATE: {
       //лист над которым работаем
@@ -105,6 +144,10 @@ function dispatch(action) {
     case FIND_UNUSED_SPACE: {
       //поиск неиспользуемых пространств на листе
       return findUnusedSpace(cnf.minPart, state.plates, cnf.height, state.symbols, action.index, action.divideMode)
+    }
+    case GET_OPTIMIZATION_LEVEL: {
+      //уровень оптимизации
+      return cnf.optimization
     }
     case GET_PARTS_LENGTH: {
       return state.parts.length
@@ -157,6 +200,9 @@ function dispatch(action) {
     }
     case GET_PLATES_LENGTH: {
       return state.plates.length
+    }
+    case GET_LENGTH: {
+      return cnf.length
     }
     case NEXT_INDEX_PLATE: {
       return ++state.currentIndexPlate
