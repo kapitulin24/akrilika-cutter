@@ -5,16 +5,16 @@ import {
   basicPositioningAC,
   calcCountPartAC,
   calcSizeStepAC,
-  calcSummEdgeHemAC,
+  calcSummEdgeHemAC, changeItemToPlateAC,
   createNewPlateAC,
   divisionOfProductsAC,
   extractPartsAC, getConfigDataAC,
-  getOptimizationLevelAC,
+  getOptimizationLevelAC, getPlateItemAC, getPlateItemsLengthAC,
   getPlateLengthAC,
   getPlatesLengthAC,
-  getStateAC, getUnusedPartsAC,
+  getStateAC, getUsedPartsAC,
   isCutAC,
-  prepareConfigDataAC,
+  prepareConfigDataAC, removeNotNeededInPlateAC,
   setNewLengthPlateAC,
   stateInitAC,
   validateConfigDataAC
@@ -78,21 +78,57 @@ export function cutter(param) {
   //endregion CALCULATE
 
   //region STATISTIC
-  let countOfParts = 0, totalLength = 0, countOfPlates = getPlatesLengthAC()
+  let countOfParts = 0,
+      totalLength = 0,
+      countOfPlates = getPlatesLengthAC(),
+      countPartsInPlates = 0,
+      area = 0,
+      perimeter = 0
 
-  for (let i = 0; i < countOfPlates; i++) {
-    const parts = getUnusedPartsAC(i)
+  //perimeter and area
+  getStateAC().config.parts.forEach(part => {
+    const height = part.height + getStateAC().eh
+    area += (part.length * height) * part.count
+    perimeter += (part.length + height) * 2 * part.count
+  }, 0)
+
+  for (let plate = 0; plate < countOfPlates; plate++) {
+    const parts = getUsedPartsAC(plate)
     countOfParts += parts
     totalLength += parts * getStateAC().sizeStep
+    countPartsInPlates += parts * getStateAC().config.step
+
+    //add info perimeter and area for product item
+    for (let item = 0; item < getPlateItemsLengthAC(plate); item++) {
+      const plateItem = getPlateItemAC(plate, item),
+            height = plateItem.h + getStateAC().eh
+
+      changeItemToPlateAC(plate, item, {
+        area: plateItem.w * height,
+        perimeter: (plateItem.w + height) * 2
+      })
+    }
   }
 
   addStatisticAC({
     countOfParts,
     totalLength,
     countOfPlates,
+    countPartsInPlates,
+    perimeter,
+    area,
     time: (new Date().getTime() - startTime) * 1e-3
   })
   //endregion STATISTIC
 
-  return getStateAC()
+  removeNotNeededInPlateAC()
+
+  return {
+    config: getStateAC().config,
+    plates: getStateAC().plates,
+    statistic: getStateAC().statistic,
+    countPart: getStateAC().countPart,
+    errors: getStateAC().errors,
+    sizeStep: getStateAC().sizeStep,
+  }
 }

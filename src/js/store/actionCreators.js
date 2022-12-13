@@ -41,7 +41,7 @@ import {
   GET_OPTIMIZATION_LEVEL,
   ADD_STATISTIC,
   GET_CONFIG_DATA,
-  GET_UNUSED_PARTS
+  GET_USED_PARTS, REMOVE_NOT_NEEDED_IN_PLATE, CHANGE_ITEM_TO_PLATE
 } from './actions'
 
 //region PREPARE DATA
@@ -62,6 +62,7 @@ export const createNewPlateAC = () => dispatch({type: CREATE_NEW_PLATE})
 export const pushNewPlateAC = (plate) => dispatch({type: PUSH_NEW_PLATE, plate})
 export const setNewLengthPlateAC = (plate, length, cb = () => {}) => dispatch({type: SET_NEW_LENGTH_PLATE, plate, length, cb})
 export const addItemToPlateAC = (plateIdx, item) => dispatch({type: ADD_ITEM_TO_PLATE, plateIdx, item})
+export const changeItemToPlateAC = (plateIdx, item, data) => dispatch({type: CHANGE_ITEM_TO_PLATE, plateIdx, item, data})
 export const deletePlateItemAC = (plateIdx, itemIdx) => dispatch({type: DELETE_PLATE_ITEM, plateIdx, itemIdx})
 export const getPlateItemsLengthAC = (plate) => dispatch({type: GET_PLATE_ITEMS_LENGTH, plate})
 export const getPlatesLengthAC = () => dispatch({type: GET_PLATES_LENGTH})
@@ -89,5 +90,6 @@ export const basicPositioningAC = () => dispatch({type: BASIC_POSITIONING})
 export const getOptimizationLevelAC = () => dispatch({type: GET_OPTIMIZATION_LEVEL})
 export const addStatisticAC = (obj) => dispatch({type: ADD_STATISTIC, obj})
 export const getConfigDataAC = (key) => dispatch({type: GET_CONFIG_DATA, key})
-export const getUnusedPartsAC = (plate) => dispatch({type: GET_UNUSED_PARTS, plate})
+export const getUsedPartsAC = (plate) => dispatch({type: GET_USED_PARTS, plate})
+export const removeNotNeededInPlateAC = () => dispatch({type: REMOVE_NOT_NEEDED_IN_PLATE})
 //endregion CALCULATION

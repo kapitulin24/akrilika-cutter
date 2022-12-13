@@ -41,7 +41,7 @@ import {
   GET_OPTIMIZATION_LEVEL,
   ADD_STATISTIC,
   GET_CONFIG_DATA,
-  GET_UNUSED_PARTS
+  GET_USED_PARTS, REMOVE_NOT_NEEDED_IN_PLATE, CHANGE_ITEM_TO_PLATE
 } from './actions'
 import validation from "../functions/validation"
 import prepareConfig from "../functions/prepareConfig"
@@ -169,7 +169,7 @@ function dispatch(action) {
     case GET_MAX_X1: {
       return Math.max(...state.plates[getIndexPLate()].items.map(e => e.x + e.w), 0)
     }
-    case GET_UNUSED_PARTS: {
+    case GET_USED_PARTS: {
       let length
       if (state.plates[action.plate].length === cnf.length) {
         let maxUnused = null
@@ -198,6 +198,20 @@ function dispatch(action) {
       const {x, w, y, h, rotate, fromPlate: index} = action.item
       fillRectAC({x, w, y, h, rotate, index})
       return state.plates[action.plateIdx].items.push(action.item)
+    }
+    case CHANGE_ITEM_TO_PLATE: {
+      //если вдруг кто-то решит изменить то что нельзя
+      ['x', 'w', 'y', 'h', 'rotate', 'fromPlate', 'id', 'height', 'length', 'count', 'part', 'parts', 'name'].forEach(e => {
+        if (action.data.hasOwnProperty(e)) {
+          delete action.data[e]
+          console.warn(`key ${e} is forbidden`)
+        }
+      })
+
+      return state.plates[action.plateIdx].items[action.item] = {
+        ...state.plates[action.plateIdx].items[action.item],
+        ...action.data
+      }
     }
     case FILL_RECT: {
       //добавить прямоугольник в матрицу
@@ -269,6 +283,9 @@ function dispatch(action) {
       return
     }
     //endregion CALCULATE
+    case REMOVE_NOT_NEEDED_IN_PLATE: {
+      return state.plates = state.plates.map(plate => plate.items)
+    }
   }
 }
 
