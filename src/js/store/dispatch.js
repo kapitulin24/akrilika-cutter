@@ -172,13 +172,13 @@ function dispatch(action) {
     case GET_USED_PARTS: {
       let length
       if (state.plates[action.plate].length === cnf.length) {
-        let maxUnused = null
+        let maxUnused = 0
         state.plates[action.plate].unusedSpace.forEach(e => {
-          if (!maxUnused || (e.h === cnf.height && maxUnused.x < e.x)) {
-            maxUnused = e
+          if (e.h === cnf.height && maxUnused < e.x) {
+            maxUnused = e.x
           }
         })
-        length = calcCurrentLengthAC(maxUnused.x, 'ceil')
+        length = calcCurrentLengthAC(maxUnused === 0 ? cnf.length : maxUnused, 'ceil')
       } else {
         length = state.plates[action.plate].length
       }
