@@ -18,7 +18,7 @@ function validation(data) {
   }
   const notValidElements = data.parts.filter(part => {
     return part.length > data.length * (data.maxStack + 1)
-      || part.height > data.height
+      || part.height > data.height - data.hem - data.edge
       || part.length < data.minPart
       || part.height < data.minPart
   })
