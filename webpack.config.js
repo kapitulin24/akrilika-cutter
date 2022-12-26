@@ -13,10 +13,10 @@ module.exports = (env) => {
     },
 
     entry: {
-      main: path.resolve(__dirname, `./src/js/cutter.js`),
+      main: path.resolve(__dirname, `./src/js/${dev ? 'index' : 'cutter'}.js`),
     },
     output : {
-      filename     : `cutter.js`,
+      filename     : `cutter${!dev ? '.min' : ''}.js`,
       path           : path.resolve(__dirname, 'build'),
       scriptType   : 'module',
       module       : true,

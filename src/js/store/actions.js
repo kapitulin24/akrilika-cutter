@@ -5,7 +5,6 @@ export const PREPARE_CONFIG_DATA = 'PREPARE_CONFIG_DATA'
 export const EXTRACT_PARTS = 'EXTRACT_PARTS'
 export const CALC_SIZE_STEP = 'SET_SIZE_STEP'
 export const CALC_COUNT_PART = 'SET_COUNT_PART'
-export const CALC_SUMM_EDGE_HEM = 'SET_SUMM_EDGE_HEM'
 
 //calculate
 export const CREATE_NEW_PLATE = 'CREATE_NEW_PLATE'

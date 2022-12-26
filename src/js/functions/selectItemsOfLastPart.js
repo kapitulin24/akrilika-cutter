@@ -3,17 +3,18 @@ import {
   deletePlateItemAC, fillRectAC, getPlateItemAC, getPlateItemsLengthAC, setNewLengthPlateAC,
 } from "../store/actionCreators"
 
-function selectItemsOfLastPart(length, sizeStep, countPart, index, eh) {
+function selectItemsOfLastPart(length, sizeStep, countPart, index) {
   let emptyParts = 0
   const res = []
 
   for (let step = length - sizeStep, num = countPart - 1; step >= 0; step -= sizeStep, num--) {
     for (let item = 0; item < getPlateItemsLengthAC(index); item++) {
       const el = getPlateItemAC(index, item),
-        w = el.rotate ? el.h + eh : el.w
+        w = el.rotate ? el.h + el.hem + el.edge : el.w
+
       if (el.x + w > step) {
         res.push({...el})
-        fillRectAC({x: el.x, w: el.w, y: el.y, h: el.h, rotate: el.rotate, value: 0, index})
+        fillRectAC({x: el.x, w: el.w, y: el.y, h: el.h, rotate: el.rotate, value: 0, index, hem: el.hem, edge: el.edge})
         deletePlateItemAC(index, item)
         item--
       }

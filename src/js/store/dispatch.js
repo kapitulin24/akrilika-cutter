@@ -3,7 +3,6 @@ import {
   ADD_ITEM_TO_PLATE,
   CALC_COUNT_PART,
   CALC_SIZE_STEP,
-  CALC_SUMM_EDGE_HEM,
   CREATE_NEW_PLATE,
   DELETE_PART_ITEM,
   EXTRACT_PARTS,
@@ -93,10 +92,6 @@ function dispatch(action) {
       //оно всегда будет очень близко к нужному. на всякий случай
       return store.setState({countPart: Math.round(cnf.length / state.sizeStep)})
     }
-    case CALC_SUMM_EDGE_HEM: {
-      //сумма кромка + подгиб для удобства
-      return store.setState({eh: cnf.edge + cnf.hem})
-    }
     case GET_CONFIG_DATA: {
       //данные конфига
       return cnf[action.key] || cnf
@@ -119,10 +114,10 @@ function dispatch(action) {
       return cnf.cut
     }
     case DIVIDER: {
-      return divider(state.plates, cnf.minPart, cnf.rotate, state.eh, cnf.maxStack, state.symbols.divide, action.items, cnf.length, state.symbols.unusedSpace)
+      return divider(state.plates, cnf.minPart, cnf.rotate, cnf.maxStack, state.symbols.divide, action.items, cnf.length, state.symbols.unusedSpace)
     }
     case BASIC_POSITIONING: {
-      return basicPositioning(cnf.rotate, state.maxIteration, state.eh, cnf.length)
+      return basicPositioning(cnf.rotate, state.maxIteration, cnf.length)
     }
     case DIVISION_OF_PRODUCTS: {
       return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration, cnf.height, state.symbols.unusedSpace)
@@ -195,13 +190,13 @@ function dispatch(action) {
       return {...state.plates[getIndexPLate()].unusedSpace[action.item]}
     }
     case ADD_ITEM_TO_PLATE: {
-      const {x, w, y, h, rotate, fromPlate: index} = action.item
-      fillRectAC({x, w, y, h, rotate, index})
+      const {x, w, y, h, rotate, hem, edge, fromPlate: index} = action.item
+      fillRectAC({x, w, y, h, rotate, index, hem, edge})
       return state.plates[action.plateIdx].items.push(action.item)
     }
     case CHANGE_ITEM_TO_PLATE: {
       //если вдруг кто-то решит изменить то что нельзя
-      ['x', 'w', 'y', 'h', 'rotate', 'fromPlate', 'id', 'height', 'length', 'count', 'part', 'parts', 'name'].forEach(e => {
+      ['x', 'w', 'y', 'h', 'rotate', 'fromPlate', 'id', 'height', 'length', 'count', 'part', 'parts', 'name', 'hem', 'edge'].forEach(e => {
         if (action.data.hasOwnProperty(e)) {
           delete action.data[e]
           console.warn(`key ${e} is forbidden`)
@@ -216,13 +211,13 @@ function dispatch(action) {
     case FILL_RECT: {
       //добавить прямоугольник в матрицу
       let {
-        x, y, w, h,
+        x, y, w, h, hem, edge,
         index: index = state.currentIndexPlate,
         value: value = 1,
         space: space = false,
         rotate: rotate = false
       } = action.param
-      let addW = 0, addH = space ? 0 : state.eh
+      let addW = 0, addH = space ? 0 : hem + edge
 
       if (rotate) [addW, addH, w, h] = [addH, addW, h, w]
 
@@ -258,7 +253,7 @@ function dispatch(action) {
       return state.plates[action.plateIdx].length
     }
     case SELECT_ITEMS_OF_LAST_PART: {
-      return selectItemsOfLastPart(cnf.length, state.sizeStep, state.countPart, action.index, state.eh)
+      return selectItemsOfLastPart(cnf.length, state.sizeStep, state.countPart, action.index)
     }
     case UPDATE_PART_NAME: {
       return updatePartName(cnf.partName, action.partItemOrName, action.part)

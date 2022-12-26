@@ -4,30 +4,37 @@ function validation(data) {
   if ([
     data.length,
     data.height,
-    data.edge,
-    data.hem,
     data.minPart
   ].some(e => !Number.isInteger(e) || e <= 0)) {
-    errors.push(`Element is not integer or > 0`)
+    errors.push(`Element is not integer`)
   }
   if (data.maxStack < 0 || !Number.isInteger(data.maxStack)) {
-    errors.push(`Max Stack is not valid (${data.maxStack})`)
+    errors.push(`Max Stack is not valid`)
   }
   if (data.optimization < 0 || !Number.isInteger(data.optimization) || data.optimization > 10) {
-    errors.push(`Optimization level is not valid or > 10 (${data.maxStack})`)
+    errors.push(`Optimization level is not valid`)
   }
+  if (data.parts.filter(e => (
+      !e.length || !e.height || !e.count || !e.hem || !e.edge ||
+      !Number.isInteger(e.length) || !Number.isInteger(e.height) || !Number.isInteger(e.count) || !Number.isInteger(e.hem) || !Number.isInteger(e.edge) ||
+      e.length <= 0 || e.height <= 0 || e.count <= 0 || e.hem <= 0 || e.edge <= 0
+    )
+  ).length) {
+    errors.push(`Parts sis not valid`)
+  }
+
   const notValidElements = data.parts.filter(part => {
     return part.length > data.length * (data.maxStack + 1)
-      || part.height > data.height - data.hem - data.edge
+      || part.height > data.height - part.hem - part.edge
       || part.length < data.minPart
       || part.height < data.minPart
   })
   if (notValidElements.length) {
-    errors.push(`Elements: ${JSON.stringify(notValidElements)} is not valid`)
+    errors.push(`Parts is not valid (diapason)`)
   }
   const steps = [0.1, 0.2, 0.25, 0.5, 1]
   if (Number.isNaN(data.step) || !steps.find(e => e === data.step)) {
-    errors.push(`Step error`)
+    errors.push(`Step is not valid`)
   }
   if (data.nameIsPrefix !== true && data.nameIsPrefix !== false) {
     errors.push(`nameIsPrefix is not bool`)
@@ -37,14 +44,6 @@ function validation(data) {
   }
   if (data.cut !== true && data.cut !== false) {
     errors.push(`cut is not bool`)
-  }
-  if (data.parts.filter(e => (
-      !e.length || !e.height || !e.count ||
-      !Number.isInteger(e.length) || !Number.isInteger(e.height) || !Number.isInteger(e.count) ||
-      e.length <= 0 || e.height <= 0 || e.count <= 0
-    )
-  ).length) {
-    errors.push(`parts is not type: {name: String(optional), length: Integer > 0, height: Integer > 0, count: Integer > 0}`)
   }
 
   return errors

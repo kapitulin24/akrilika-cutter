@@ -2,7 +2,6 @@ import dispatch from "./dispatch"
 import {
   CALC_COUNT_PART,
   CALC_SIZE_STEP,
-  CALC_SUMM_EDGE_HEM,
   CREATE_NEW_PLATE,
   EXTRACT_PARTS,
   CALC_CURRENT_LENGTH,
@@ -52,7 +51,6 @@ export const prepareConfigDataAC = (config) => dispatch({type: PREPARE_CONFIG_DA
 export const extractPartsAC = () => dispatch({type: EXTRACT_PARTS})
 export const calcSizeStepAC = () => dispatch({type: CALC_SIZE_STEP})
 export const calcCountPartAC = () => dispatch({type: CALC_COUNT_PART})
-export const calcSummEdgeHemAC = () => dispatch({type: CALC_SUMM_EDGE_HEM})
 //endregion PREPARE DATA
 
 //region CALCULATION

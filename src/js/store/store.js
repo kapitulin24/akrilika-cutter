@@ -14,7 +14,6 @@ const initialState = {
   statistic: {},
   sizeStep: null,
   countPart: null,
-  eh: null,
   maxIteration: 100 //максимальное количество итераций в цикле while
 }
 

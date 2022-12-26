@@ -5,7 +5,7 @@ import {
 } from "../store/actionCreators"
 import exceedingIterations from "./exceedingIterations"
 
-function basicPositioning(isRotate, maxIteration, eh, length) {
+function basicPositioning(isRotate, maxIteration, length) {
   let countIteration = 0
   while (getPartsLengthAC()) {
     let isFound = false
@@ -21,8 +21,8 @@ function basicPositioning(isRotate, maxIteration, eh, length) {
       const currUnused = getUnusedSpaceItemAC(unused)
       for (let rect = 0; rect < getPartsLengthAC(); rect++) {
         const curRect = getPartItemAC(rect),
-          isHorizontal = curRect.w <= currUnused.w && curRect.h + eh <= currUnused.h,
-          isVertical = curRect.w <= currUnused.h && curRect.h + eh <= currUnused.w
+          isHorizontal = curRect.w <= currUnused.w && curRect.h + curRect.hem + curRect.edge <= currUnused.h,
+          isVertical = curRect.w <= currUnused.h && curRect.h + curRect.hem + curRect.edge <= currUnused.w
 
         if (isHorizontal || (isRotate && isVertical)) { //если найдено
           const obj = {

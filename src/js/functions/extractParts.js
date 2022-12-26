@@ -14,12 +14,14 @@ function extractParts(parts, name, length, partName, nameIsPrefix, minPart) {
         parts = Math.ceil(rect.length / (length)),
         h = rect.height,
         w = rect.length % length || length,
+        hem = rect.hem,
+        edge = rect.edge,
         difference = w > 0 && w < minPart ? minPart - w : 0
 
       for (let i = 0, part = 1; i < rect.length; i += length, part++) {
         const name = baseName + (parts > 1 ? ` ${partName} ${part}` : ''),
               width = part === 1 ? w + difference : part === 2 ? length - difference : length
-        tResult.push({...rect, name, w: width, h, id, part, parts, rotate: false})
+        tResult.push({...rect, name, w: width, h, id, part, parts, hem, edge, rotate: false})
       }
     }
   })

@@ -21,7 +21,9 @@ function calc(e) {
       length: data[`length${i}`],
       height: data[`height${i}`],
       count: data[`count${i}`],
-      color: data[`color${i}`]
+      color: data[`color${i}`],
+      hem: data[`hem${i}`],
+      edge: data[`edge${i}`],
     }
 
     if (data[`name${i}`] !== '') obj.name = data[`name${i}`]

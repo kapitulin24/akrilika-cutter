@@ -5,7 +5,7 @@ import {
   basicPositioningAC,
   calcCountPartAC,
   calcSizeStepAC,
-  calcSummEdgeHemAC, changeItemToPlateAC,
+  changeItemToPlateAC,
   createNewPlateAC,
   divisionOfProductsAC,
   extractPartsAC, getConfigDataAC,
@@ -30,15 +30,13 @@ export function cutter(param) {
     nameIsPrefix: false,
     rotate: false,
     cut: false,
-    parts: [], //{name: '', length: 12, height: 500, count: 1} name - опционально
+    parts: [], //{name: '', length: 12, height: 500, count: 1, edge: 40, hem: 40} name - опционально
     length: 3660,
     height: 760,
     step: 0.25,
     minPart: 12,
     maxStack: 1,
     optimization: 2,
-    edge: 40,
-    hem: 40,
     ...param
   }
   //endregion INPUT DATA
@@ -57,7 +55,6 @@ export function cutter(param) {
 
   calcSizeStepAC()
   calcCountPartAC()
-  calcSummEdgeHemAC()
   //endregion PREPARE DATA
 
   //region CALCULATE
@@ -87,7 +84,7 @@ export function cutter(param) {
 
   //perimeter and area
   getStateAC().config.parts.forEach(part => {
-    const height = part.height + getStateAC().eh
+    const height = part.height + part.hem + part.edge
     area += (part.length * height) * part.count
     perimeter += (part.length + height) * 2 * part.count
   }, 0)
@@ -101,7 +98,7 @@ export function cutter(param) {
     //add info perimeter and area for product item
     for (let item = 0; item < getPlateItemsLengthAC(plate); item++) {
       const plateItem = getPlateItemAC(plate, item),
-            height = plateItem.h + getStateAC().eh
+            height = plateItem.h + plateItem.edge + plateItem.hem
 
       changeItemToPlateAC(plate, item, {
         area: plateItem.w * height,
