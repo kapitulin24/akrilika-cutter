@@ -15,7 +15,7 @@ function validation(data) {
     errors.push(`Optimization level is not valid`)
   }
   if (data.parts.filter(e => (
-      e.length !== undefined  || e.height !== undefined || e.count !== undefined || e.hem !== undefined || e.edge !== undefined ||
+      e.length === undefined  || e.height === undefined || e.count === undefined || e.hem === undefined || e.edge === undefined ||
       !Number.isInteger(e.length) || !Number.isInteger(e.height) || !Number.isInteger(e.count) || !Number.isInteger(e.hem) || !Number.isInteger(e.edge) ||
       e.length <= 0 || e.height <= 0 || e.count <= 0 || e.hem < 0 || e.edge < 0
     )
