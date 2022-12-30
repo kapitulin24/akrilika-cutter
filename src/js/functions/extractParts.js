@@ -8,7 +8,7 @@ function extractParts(parts, name, length, partName, nameIsPrefix, minPart) {
   parts.forEach((rect, i) => {
     for (let part = 1; part <= rect.count; part++) {
       const baseName = rect.name
-          ? `${nameIsPrefix ? name : ''}${rect.name} ${part}`
+          ? `${nameIsPrefix ? name : ''}${rect.name}`
           : `${name} ${i + 1}-${part}`,
         id = rndID(),
         parts = Math.ceil(rect.length / (length)),
@@ -19,9 +19,8 @@ function extractParts(parts, name, length, partName, nameIsPrefix, minPart) {
         difference = w > 0 && w < minPart ? minPart - w : 0
 
       for (let i = 0, part = 1; i < rect.length; i += length, part++) {
-        const name = baseName + (parts > 1 ? ` ${partName} ${part}` : ''),
-              width = part === 1 ? w + difference : part === 2 ? length - difference : length
-        tResult.push({...rect, name, w: width, h, id, part, parts, hem, edge, rotate: false})
+        const width = part === 1 ? w + difference : part === 2 ? length - difference : length
+        tResult.push({...rect, name: baseName, w: width, h, id, part, parts, hem, edge, rotate: false})
       }
     }
   })
