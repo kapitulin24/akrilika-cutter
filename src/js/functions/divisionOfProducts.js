@@ -5,7 +5,7 @@ import {
 import exceedingIterations from "./exceedingIterations"
 import updateInfoParts from "./updateInfoParts"
 
-function divisionOfProducts(length, sizeStep, maxIteration, height, unusedSpaceSymbol) {
+function divisionOfProducts(length, sizeStep, maxIteration, height, unusedSpaceSymbol, showPartInName) {
   let dividedItems = null,
     countIteration = 0,
     lastPlateIndex = getPlatesLengthAC() - 1
@@ -39,7 +39,7 @@ function divisionOfProducts(length, sizeStep, maxIteration, height, unusedSpaceS
       if (dividedItems === false) {
         comeBackItems()
       } else {
-        dividedItems = updateInfoParts(uniqItems, dividedItems)
+        dividedItems = updateInfoParts(uniqItems, dividedItems, showPartInName)
         putItems()
       }
       countIteration = 0

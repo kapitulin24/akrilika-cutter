@@ -1,6 +1,6 @@
 import {updatePartNameAC, updatePartsInfoInPlateAC} from "../store/actionCreators"
 
-function updateInfoParts(uniqItems, dividedItems) {
+function updateInfoParts(uniqItems, dividedItems, showPartInName) {
   Object.keys(uniqItems).forEach(itemId => {
     const partsFilter = dividedItems.filter(part => part.id === itemId),
       parts = uniqItems[itemId] + partsFilter.length - 1
@@ -8,7 +8,7 @@ function updateInfoParts(uniqItems, dividedItems) {
     partsFilter.forEach(part => {
       part.part = ++count
       part.parts = parts
-      part.name = updatePartNameAC(part)
+      showPartInName && (part.name = updatePartNameAC(part))
     })
     updatePartsInfoInPlateAC(itemId, count, parts)
   })

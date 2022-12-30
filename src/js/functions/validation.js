@@ -45,6 +45,9 @@ function validation(data) {
   if (data.cut !== true && data.cut !== false) {
     errors.push(`cut is not bool`)
   }
+  if (data.showPartInName !== true && data.showPartInName !== false) {
+    errors.push(`showPartInName is not bool`)
+  }
 
   return errors
 }

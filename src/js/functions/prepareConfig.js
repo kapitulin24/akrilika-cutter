@@ -19,7 +19,8 @@ function prepareConfig(data) {
     })),
     nameIsPrefix: data.nameIsPrefix,
     rotate: data.rotate,
-    cut: data.cut
+    cut: data.cut,
+    showPartInName: data.showPartInName
   }
 }
 

@@ -120,7 +120,7 @@ function dispatch(action) {
       return basicPositioning(cnf.rotate, state.maxIteration, cnf.length)
     }
     case DIVISION_OF_PRODUCTS: {
-      return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration, cnf.height, state.symbols.unusedSpace)
+      return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration, cnf.height, state.symbols.unusedSpace, state.config.showPartInName)
     }
     case PUSH_NEW_PLATE: {
       //пушим новый лист
@@ -268,7 +268,7 @@ function dispatch(action) {
           const item = state.plates[i].items[j]
           if (item.id === action.id) {
             ++count
-            item.name = updatePartNameAC(item, count)
+            state.config.showPartInName && (item.name = updatePartNameAC(item, count))
             item.part = count
             item.parts = action.parts
             if (count === action.parts) break cancel
