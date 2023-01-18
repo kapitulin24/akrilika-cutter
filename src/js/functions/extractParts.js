@@ -20,7 +20,7 @@ function extractParts(parts, name, length, partName, nameIsPrefix, minPart) {
 
       for (let i = 0, part = 1; i < rect.length; i += length, part++) {
         const width = part === 1 ? w + difference : part === 2 ? length - difference : length
-        tResult.push({...rect, name: baseName, w: width, h, id, part, parts, hem, edge, rotate: false})
+        tResult.push({...rect, name: baseName, w: width, h, id, part, parts, hem, edge, rotate: true})
       }
     }
   })

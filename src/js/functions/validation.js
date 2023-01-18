@@ -54,6 +54,9 @@ function validation(data) {
   if (data.prepareOutputPlates !== true && data.prepareOutputPlates !== false) {
     errors.push(`prepareOutputPlates is not bool`)
   }
+  if (data.divide.toLowerCase() !== 'x' && data.divide.toLowerCase() !== 'y') {
+    errors.push(`divide is not 'x' or 'y'`)
+  }
 
   return errors
 }

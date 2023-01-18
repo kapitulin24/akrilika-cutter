@@ -24,7 +24,7 @@ function basicPositioning(isRotate, maxIteration, length) {
           isHorizontal = curRect.w <= currUnused.w && curRect.h <= currUnused.h,
           isVertical = curRect.w <= currUnused.h && curRect.h <= currUnused.w
 
-        if (isHorizontal || (isRotate && isVertical)) { //если найдено
+        if (isHorizontal || ((isRotate || curRect.rotate) && isVertical)) { //если найдено
           const obj = {
             ...curRect,
             x: currUnused.x,

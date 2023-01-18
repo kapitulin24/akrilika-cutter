@@ -82,7 +82,7 @@ function dispatch(action) {
     }
     case EXTRACT_PARTS: {
       //извлечь изделия с некоторыми преобразованиями
-      return store.setState({parts: extractParts(cnf.parts, cnf.name, cnf.length, cnf.partName, cnf.nameIsPrefix, cnf.minPart)})
+      return store.setState({parts: extractParts(cnf.parts, cnf.name, cnf.height, cnf.partName, cnf.nameIsPrefix, cnf.minPart)})
     }
     case CALC_SIZE_STEP: {
       //кратность листа в линейном выражении
@@ -114,7 +114,7 @@ function dispatch(action) {
       return cnf.cut
     }
     case DIVIDER: {
-      return divider(state.plates, cnf.minPart, cnf.rotate, cnf.maxStack, state.symbols.divide, action.items, cnf.length, state.symbols.unusedSpace)
+      return divider(state.plates, cnf.minPart, cnf.rotate, cnf.maxStack, state.symbols.divide, action.items, cnf.height, state.symbols.unusedSpace)
     }
     case BASIC_POSITIONING: {
       return basicPositioning(cnf.rotate, state.maxIteration, cnf.length)

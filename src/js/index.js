@@ -72,15 +72,16 @@ function draw(cut, mode = 'items') {
     items[mode].forEach(e => {
       const edge = mode === 'items' ? e.edge : 0,
             hem = mode === 'items' ? e.hem : 0,
-            eh = edge + hem
+            eh = edge + hem,
+            rotate = e.rotate
 
       let w = e.w, h = e.h, x = e.x, y = e.y
-      if (e.rotate) [w, h] = [h, w]
+      if (rotate) [w, h] = [h, w]
       ctx.fillStyle = e.color || 'LightSeaGreen'
       ctx.fillRect(x, y, w, h)
       ctx.fillStyle = '#000'
       ctx.font = '22px Verdana'
-      if (e.rotate) {
+      if (rotate) {
         ctx.rotate(-Math.PI / 2)
         ctx.fillText(`${e.name} (${h}x${w}+${edge}+${hem} мм)`, -y - h + 10, x + 25)
         ctx.rotate(Math.PI / 2)

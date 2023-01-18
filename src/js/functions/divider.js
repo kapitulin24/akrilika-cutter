@@ -19,11 +19,11 @@ function divider(plates, minPart, rotate, maxStack, divideSymbol, items, length,
 
     const filterUnused = () => {
       unusedRectAll = decreaseSort(unusedRectAll.filter(space => {
-        if (space.h >= currRect.h && space.w >= minPart) {
-          return true
-        } else if (rotate && !space.rotate && space.w >= currRect.h && space.h >= minPart) {
+        if ((rotate || currRect.fake) && !space.rotate && space.w >= currRect.h && space.h >= minPart) {
           [space.w, space.h] = [space.h, space.w]
           space.rotate = true
+          return true
+        } else if ((!rotate && !currRect.fake) && space.h >= currRect.h && space.w >= minPart) {
           return true
         }
         return false

@@ -40,6 +40,7 @@ export function cutter(param) {
     optimization: 2,
     prepareOutputPlates: true, //c преобразованием выходных данных
     getAllData: false, //получить все данные
+    divide: 'x', //x || y (axis)
     ...param
   }
   //endregion INPUT DATA
