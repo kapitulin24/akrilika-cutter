@@ -12,7 +12,7 @@ function prepareConfig(data) {
       ...e,
       name: e.name,
       length: +e.length,
-      height: +e.height,
+      height: +e.height + +e.hem + +e.edge,
       count: +e.count,
       hem: +e.hem,
       edge: +e.edge,

@@ -60,7 +60,7 @@ function findUnusedSpace(minPart, plates, height, symbols, index = getCurrentInd
         x = findIndex(arr[y], x, y, step)
         const {h, y: topY} = findEndY(x, y),
           {w, x: leftX} = findEndX(x, y, topY)
-        fillRectAC({x: x - leftX, w, y: y - topY, h, index, value: spaceSymbol, space: true})
+        fillRectAC({x: x - leftX, w, y: y - topY, h, index, value: spaceSymbol})
         res.push({x: x - leftX, y: y - topY, w, h, fromPlate: index})
       }
     }

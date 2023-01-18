@@ -87,9 +87,8 @@ export function cutter(param) {
 
   //perimeter and area
   getStateAC().config.parts.forEach(part => {
-    const height = part.height + part.hem + part.edge
-    area += (part.length * height) * part.count
-    perimeter += (part.length + height) * 2 * part.count
+    area += (part.length * part.height) * part.count
+    perimeter += (part.length + part.height) * 2 * part.count
   }, 0)
 
   for (let plate = 0; plate < countOfPlates; plate++) {
@@ -100,12 +99,11 @@ export function cutter(param) {
 
     //add info perimeter and area for product item
     for (let item = 0; item < getPlateItemsLengthAC(plate); item++) {
-      const plateItem = getPlateItemAC(plate, item),
-        height = plateItem.h + plateItem.edge + plateItem.hem
+      const plateItem = getPlateItemAC(plate, item)
 
       changeItemToPlateAC(plate, item, {
-        area: plateItem.w * height,
-        perimeter: (plateItem.w + height) * 2
+        area: plateItem.w * plateItem.h,
+        perimeter: (plateItem.w + plateItem.h) * 2
       })
     }
   }

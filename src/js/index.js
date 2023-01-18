@@ -71,34 +71,35 @@ function draw(cut, mode = 'items') {
     ctx.strokeRect(0, 0, canvas.width, canvas.height)
     items[mode].forEach(e => {
       const edge = mode === 'items' ? e.edge : 0,
-            hem = mode === 'items' ? e.hem : 0
+            hem = mode === 'items' ? e.hem : 0,
+            eh = edge + hem
 
-      let w = e.w, h = e.h
+      let w = e.w, h = e.h, x = e.x, y = e.y
       if (e.rotate) [w, h] = [h, w]
       ctx.fillStyle = e.color || 'LightSeaGreen'
-      ctx.fillRect(e.x, e.y, w, h)
+      ctx.fillRect(x, y, w, h)
       ctx.fillStyle = '#000'
       ctx.font = '22px Verdana'
       if (e.rotate) {
         ctx.rotate(-Math.PI / 2)
-        ctx.fillText(`${e.name} (${h}x${w}+${edge}+${hem} мм)`, -e.y - h + 10, e.x + 25)
+        ctx.fillText(`${e.name} (${h}x${w}+${edge}+${hem} мм)`, -y - h + 10, x + 25)
         ctx.rotate(Math.PI / 2)
         //кромка
         ctx.fillStyle = 'MediumAquamarine'
-        ctx.fillRect(e.x + w, e.y, edge, h)
+        ctx.fillRect(x + w - eh, y, edge, h)
         //подгиб
         ctx.fillStyle = 'DarkSeaGreen'
-        ctx.fillRect(e.x + w + edge, e.y, hem, h)
-        ctx.strokeRect(e.x, e.y, w + edge + hem, h)
+        ctx.fillRect(x + w - hem, y, hem, h)
+        ctx.strokeRect(x, y, w, h)
       } else if (mode === 'items') {
-        ctx.fillText(`${e.name} (${w}x${h}+${edge}+${hem} мм)`, e.x + 10, e.y + 25)
+        ctx.fillText(`${e.name} (${w}x${h}+${edge}+${hem} мм)`, x + 10, y + 25)
         //кромка
         ctx.fillStyle = 'MediumAquamarine'
-        ctx.fillRect(e.x, e.y + h, w, edge)
+        ctx.fillRect(x, y + h - eh, w, edge)
         //подгиб
         ctx.fillStyle = 'DarkSeaGreen'
-        ctx.fillRect(e.x, e.y + h + edge, w, hem)
-        ctx.strokeRect(e.x, e.y, w, h + edge + hem)
+        ctx.fillRect(x, y + h - hem, w, hem)
+        ctx.strokeRect(x, y, w, h)
       }
     })
 

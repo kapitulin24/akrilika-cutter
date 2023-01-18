@@ -21,8 +21,8 @@ function basicPositioning(isRotate, maxIteration, length) {
       const currUnused = getUnusedSpaceItemAC(unused)
       for (let rect = 0; rect < getPartsLengthAC(); rect++) {
         const curRect = getPartItemAC(rect),
-          isHorizontal = curRect.w <= currUnused.w && curRect.h + curRect.hem + curRect.edge <= currUnused.h,
-          isVertical = curRect.w <= currUnused.h && curRect.h + curRect.hem + curRect.edge <= currUnused.w
+          isHorizontal = curRect.w <= currUnused.w && curRect.h <= currUnused.h,
+          isVertical = curRect.w <= currUnused.h && curRect.h <= currUnused.w
 
         if (isHorizontal || (isRotate && isVertical)) { //если найдено
           const obj = {

@@ -190,8 +190,8 @@ function dispatch(action) {
       return {...state.plates[getIndexPLate()].unusedSpace[action.item]}
     }
     case ADD_ITEM_TO_PLATE: {
-      const {x, w, y, h, rotate, hem, edge, fromPlate: index} = action.item
-      fillRectAC({x, w, y, h, rotate, index, hem, edge})
+      const {x, w, y, h, rotate, fromPlate: index} = action.item
+      fillRectAC({x, w, y, h, rotate, index})
       return state.plates[action.plateIdx].items.push(action.item)
     }
     case CHANGE_ITEM_TO_PLATE: {
@@ -211,18 +211,16 @@ function dispatch(action) {
     case FILL_RECT: {
       //добавить прямоугольник в матрицу
       let {
-        x, y, w, h, hem, edge,
+        x, y, w, h,
         index: index = state.currentIndexPlate,
         value: value = 1,
-        space: space = false,
         rotate: rotate = false
       } = action.param
-      let addW = 0, addH = space ? 0 : hem + edge
 
-      if (rotate) [addW, addH, w, h] = [addH, addW, h, w]
+      if (rotate) [w, h] = [h, w]
 
-      for (let x1 = x; x1 < w + x + addW; x1++) {
-        for (let y1 = y; y1 < h + y + addH; y1++) {
+      for (let x1 = x; x1 < w + x; x1++) {
+        for (let y1 = y; y1 < h + y; y1++) {
           state.plates[index].matrix[y1][x1] = value
         }
       }

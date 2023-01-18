@@ -21,7 +21,7 @@ function divisionOfProducts(length, sizeStep, maxIteration, height, unusedSpaceS
         comeBackItems = () => {
         const x = getPlateLengthAC(lastPlateIndex)
           const cb = () => {
-            fillRectAC({x, y: 0, w: sizeStep, h: height, value: unusedSpaceSymbol, index: lastPlateIndex, space: true})
+            fillRectAC({x, y: 0, w: sizeStep, h: height, value: unusedSpaceSymbol, index: lastPlateIndex})
             parts.forEach(item => addItemToPlateAC(lastPlateIndex, item))
           }
           setNewLengthPlateAC(lastPlateIndex, x + sizeStep, cb)

@@ -19,9 +19,9 @@ function divider(plates, minPart, rotate, maxStack, divideSymbol, items, length,
 
     const filterUnused = () => {
       unusedRectAll = decreaseSort(unusedRectAll.filter(space => {
-        if (space.h >= currRect.h + currRect.hem + currRect.edge && space.w >= minPart) {
+        if (space.h >= currRect.h && space.w >= minPart) {
           return true
-        } else if (rotate && !space.rotate && space.w >= currRect.h + currRect.hem + currRect.edge && space.h >= minPart) {
+        } else if (rotate && !space.rotate && space.w >= currRect.h && space.h >= minPart) {
           [space.w, space.h] = [space.h, space.w]
           space.rotate = true
           return true
@@ -35,7 +35,6 @@ function divider(plates, minPart, rotate, maxStack, divideSymbol, items, length,
     const rectsToBack = (res) => {
       res.forEach(e => fillRectAC({
         x: e.x, w: e.w, y: e.y, h: e.h,
-        hem: e.hem, edge: e.edge,
         rotate: e.rotate,
         value: unusedSpaceSymbol,
         index: e.fromPlate
@@ -89,8 +88,7 @@ function divider(plates, minPart, rotate, maxStack, divideSymbol, items, length,
             })
             fillRectAC({
               x: current.x, w, y: current.y, h,
-              rotate: current.rotate, value: divideSymbol, index,
-              hem: currRect.hem, edge: currRect.edge
+              rotate: current.rotate, value: divideSymbol, index
             })
 
             for (let i = 0; i < unusedRectAll.length; i++) {
