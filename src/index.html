@@ -12,11 +12,12 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: 3fr 5fr;
+      grid-template-columns: 3fr 9fr;
       gap: 10px;
     }
-    [type="number"] {
-      width: 100px;
+    [type="number"],
+    [type="text"] {
+      width: 90px;
     }
     canvas {
       width: 95vw;
@@ -145,6 +146,8 @@
       <label>Ширина<input type="number" name="height1" value="600"></label>
       <label>Количество<input type="number" name="count1" value="1"></label>
       <label>Цвет<input type="text" name="color1" value=""></label>
+      <label>hem<input type="text" name="hem1" value="10"></label>
+      <label>edge<input type="text" name="edge1" value="10"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name2" value=""></label>
@@ -152,6 +155,8 @@
       <label>Ширина<input type="number" name="height2" value="600"></label>
       <label>Количество<input type="number" name="count2" value="1"></label>
       <label>Цвет<input type="text" name="color2" value="crimson"></label>
+      <label>hem<input type="text" name="hem2" value="20"></label>
+      <label>edge<input type="text" name="edge2" value="20"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name3" value=""></label>
@@ -159,6 +164,8 @@
       <label>Ширина<input type="number" name="height3" value="200"></label>
       <label>Количество<input type="number" name="count3" value="1"></label>
       <label>Цвет<input type="text" name="color3" value="gray"></label>
+      <label>hem<input type="text" name="hem3" value="30"></label>
+      <label>edge<input type="text" name="edge3" value="30"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name4" value=""></label>
@@ -166,6 +173,8 @@
       <label>Ширина<input type="number" name="height4" value="200"></label>
       <label>Количество<input type="number" name="count4" value="1"></label>
       <label>Цвет<input type="text" name="color4" value="silver"></label>
+      <label>hem<input type="text" name="hem4" value="40"></label>
+      <label>edge<input type="text" name="edge4" value="40"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name5" value=""></label>
@@ -173,6 +182,8 @@
       <label>Ширина<input type="number" name="height5" value="200"></label>
       <label>Количество<input type="number" name="count5" value="2"></label>
       <label>Цвет<input type="text" name="color5" value="yellow"></label>
+      <label>hem<input type="text" name="hem5" value="50"></label>
+      <label>edge<input type="text" name="edge5" value="50"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name6" value=""></label>
@@ -180,6 +191,8 @@
       <label>Ширина<input type="number" name="height6" value=""></label>
       <label>Количество<input type="number" name="count6" value=""></label>
       <label>Цвет<input type="text" name="color6" value="blue"></label>
+      <label>hem<input type="text" name="hem6" value="60"></label>
+      <label>edge<input type="text" name="edge6" value="60"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name7" value=""></label>
@@ -187,6 +200,8 @@
       <label>Ширина<input type="number" name="height7" value=""></label>
       <label>Количество<input type="number" name="count7" value=""></label>
       <label>Цвет<input type="text" name="color7" value="green"></label>
+      <label>hem<input type="text" name="hem7" value="70"></label>
+      <label>edge<input type="text" name="edge7" value="70"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name8" value=""></label>
@@ -194,6 +209,8 @@
       <label>Ширина<input type="number" name="height8" value=""></label>
       <label>Количество<input type="number" name="count8" value=""></label>
       <label>Цвет<input type="text" name="color8" value="red"></label>
+      <label>hem<input type="text" name="hem8" value="80"></label>
+      <label>edge<input type="text" name="edge8" value="80"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name9" value=""></label>
@@ -201,6 +218,8 @@
       <label>Ширина<input type="number" name="height9" value=""></label>
       <label>Количество<input type="number" name="count9" value=""></label>
       <label>Цвет<input type="text" name="color9" value=""></label>
+      <label>hem<input type="text" name="hem9" value="90"></label>
+      <label>edge<input type="text" name="edge9" value="90"></label>
     </div>
     <div>
       <label>Имя(не обязательно)<input type="text" name="name10" value=""></label>
@@ -208,6 +227,8 @@
       <label>Ширина<input type="number" name="height10" value=""></label>
       <label>Количество<input type="number" name="count10" value=""></label>
       <label>Цвет<input type="text" name="color10" value=""></label>
+      <label>hem<input type="text" name="hem10" value="100"></label>
+      <label>edge<input type="text" name="edge10" value="100"></label>
     </div>
   </div>
   <div>
@@ -218,7 +239,7 @@
   <div><span id="time" style="color: green"></span></div>
 </form>
   <div id="graph"></div>
-  <script src="index.js"></script>
+  <script src="cutter.js"></script>
 <!--  <script src="index.min.js"></script>-->
 </body>
 </html>

@@ -34,6 +34,8 @@ function calc(e) {
   data.nameIsPrefix = !!data.nameIsPrefix
   data.rotate = !!data.rotate
   data.cut = !!data.cut
+  data.getAllData = true //для дебага
+  data.prepareOutputPlates = false //для дебага
 
   const cut = cutter(data),
     errorsBlock = document.querySelector('#errors')
@@ -53,13 +55,12 @@ function calc(e) {
 function draw(cut, mode = 'items') {
   graph.innerHTML = ''
   const length = cut.config.length,
-    height = cut.config.height,
-    edge = mode === 'items' ? cut.config.edge : 0,
-    hem = mode === 'items' ? cut.config.hem : 0
+    height = cut.config.height
 
   cut.plates.forEach(items => {
     const canvas = document.createElement('canvas'),
-      div = document.createElement('div')
+          div = document.createElement('div')
+
     div.classList.add('plate')
 
     canvas.setAttribute('width', `${length}`)
@@ -69,6 +70,9 @@ function draw(cut, mode = 'items') {
 
     ctx.strokeRect(0, 0, canvas.width, canvas.height)
     items[mode].forEach(e => {
+      const edge = mode === 'items' ? e.edge : 0,
+            hem = mode === 'items' ? e.hem : 0
+
       let w = e.w, h = e.h
       if (e.rotate) [w, h] = [h, w]
       ctx.fillStyle = e.color || 'LightSeaGreen'

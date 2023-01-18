@@ -94,7 +94,7 @@ function dispatch(action) {
     }
     case GET_CONFIG_DATA: {
       //данные конфига
-      return cnf[action.key] || cnf
+      return cnf.hasOwnProperty(action.key) ? cnf[action.key] : cnf
     }
     case ADD_STATISTIC: {
       //добавить статистику

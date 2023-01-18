@@ -20,7 +20,9 @@ function prepareConfig(data) {
     nameIsPrefix: data.nameIsPrefix,
     rotate: data.rotate,
     cut: data.cut,
-    showPartInName: data.showPartInName
+    showPartInName: data.showPartInName,
+    getAllData: data.getAllData,
+    prepareOutputPlates: data.prepareOutputPlates
   }
 }
 

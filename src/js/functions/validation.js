@@ -48,6 +48,12 @@ function validation(data) {
   if (data.showPartInName !== true && data.showPartInName !== false) {
     errors.push(`showPartInName is not bool`)
   }
+  if (data.getAllData !== true && data.getAllData !== false) {
+    errors.push(`getAllData is not bool`)
+  }
+  if (data.prepareOutputPlates !== true && data.prepareOutputPlates !== false) {
+    errors.push(`prepareOutputPlates is not bool`)
+  }
 
   return errors
 }

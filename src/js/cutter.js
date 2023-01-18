@@ -38,6 +38,8 @@ export function cutter(param) {
     minPart: 12,
     maxStack: 1,
     optimization: 2,
+    prepareOutputPlates: true, //c преобразованием выходных данных
+    getAllData: false, //получить все данные
     ...param
   }
   //endregion INPUT DATA
@@ -77,11 +79,11 @@ export function cutter(param) {
 
   //region STATISTIC
   let countOfParts = 0,
-      totalLength = 0,
-      countOfPlates = getPlatesLengthAC(),
-      countPartsInPlates = 0,
-      area = 0,
-      perimeter = 0
+    totalLength = 0,
+    countOfPlates = getPlatesLengthAC(),
+    countPartsInPlates = 0,
+    area = 0,
+    perimeter = 0
 
   //perimeter and area
   getStateAC().config.parts.forEach(part => {
@@ -99,7 +101,7 @@ export function cutter(param) {
     //add info perimeter and area for product item
     for (let item = 0; item < getPlateItemsLengthAC(plate); item++) {
       const plateItem = getPlateItemAC(plate, item),
-            height = plateItem.h + plateItem.edge + plateItem.hem
+        height = plateItem.h + plateItem.edge + plateItem.hem
 
       changeItemToPlateAC(plate, item, {
         area: plateItem.w * height,
@@ -119,14 +121,20 @@ export function cutter(param) {
   })
   //endregion STATISTIC
 
-  removeNotNeededInPlateAC()
+  if (getConfigDataAC('prepareOutputPlates')) {
+    removeNotNeededInPlateAC()
+  }
 
-  return {
-    config: getStateAC().config,
-    plates: getStateAC().plates,
-    statistic: getStateAC().statistic,
-    countPart: getStateAC().countPart,
-    errors: getStateAC().errors,
-    sizeStep: getStateAC().sizeStep,
+  if (getConfigDataAC('getAllData')) {
+    return getStateAC()
+  } else {
+    return {
+      config: getConfigDataAC(),
+      plates: getStateAC().plates,
+      statistic: getStateAC().statistic,
+      countPart: getStateAC().countPart,
+      errors: getStateAC().errors,
+      sizeStep: getStateAC().sizeStep
+    }
   }
 }
