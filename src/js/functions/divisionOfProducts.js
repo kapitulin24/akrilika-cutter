@@ -1,11 +1,11 @@
 import {
   addItemToPlateAC, deleteLastPlateAC, dividerAC, fillRectAC, findUnusedSpaceAC, getPlateItemsLengthAC,
-  getPlateLengthAC, getPlatesLengthAC, selectItemsOfLastPartAC, setNewLengthPlateAC
+  getPlateSizeAC, getPlatesLengthAC, selectItemsOfLastPartAC, setNewSizePlateAC
 } from "../store/actionCreators"
 import exceedingIterations from "./exceedingIterations"
 import updateInfoParts from "./updateInfoParts"
 
-function divisionOfProducts(length, sizeStep, maxIteration, height, unusedSpaceSymbol, showPartInName) {
+function divisionOfProducts(sizeStep, maxIteration, height, unusedSpaceSymbol, showPartInName) {
   let dividedItems = null,
     countIteration = 0,
     lastPlateIndex = getPlatesLengthAC() - 1
@@ -19,12 +19,12 @@ function divisionOfProducts(length, sizeStep, maxIteration, height, unusedSpaceS
           return acc
         }, {}),
         comeBackItems = () => {
-        const x = getPlateLengthAC(lastPlateIndex)
+        const x = getPlateSizeAC(lastPlateIndex)
           const cb = () => {
             fillRectAC({x, y: 0, w: sizeStep, h: height, value: unusedSpaceSymbol, index: lastPlateIndex})
             parts.forEach(item => addItemToPlateAC(lastPlateIndex, item))
           }
-          setNewLengthPlateAC(lastPlateIndex, x + sizeStep, cb)
+          setNewSizePlateAC(lastPlateIndex, x + sizeStep, cb)
           lastPlateIndex--
         },
         putItems = () => {

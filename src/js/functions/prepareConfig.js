@@ -22,7 +22,8 @@ function prepareConfig(data) {
     cut: data.cut,
     showPartInName: data.showPartInName,
     getAllData: data.getAllData,
-    prepareOutputPlates: data.prepareOutputPlates
+    prepareOutputPlates: data.prepareOutputPlates,
+    axisX: data.axisX
   }
 }
 

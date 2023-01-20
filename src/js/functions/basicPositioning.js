@@ -1,18 +1,18 @@
 import {
-  addItemToPlateAC, createNewPlateAC, deletePartItemAC, findUnusedSpaceAC, calcCurrentLengthAC,
+  addItemToPlateAC, createNewPlateAC, deletePartItemAC, findUnusedSpaceAC, calcCurrentSizeAC,
   getCurrentIndexPlateAC, getMaxX1AC, getPartItemAC, getPartsLengthAC, getPlateItemsLengthAC,
   getPlatesLengthAC, getUnusedSpaceItemAC, getUnusedSpaceLengthAC, nextIndexPlateAC, reverseUnusedSpaceAC
 } from "../store/actionCreators"
 import exceedingIterations from "./exceedingIterations"
 
-function basicPositioning(isRotate, maxIteration, length) {
+function basicPositioning(isRotate, maxIteration, length, axisX) {
   let countIteration = 0
   while (getPartsLengthAC()) {
     let isFound = false
     const fromPlate = getCurrentIndexPlateAC()
 
     //текущая используемая длина на листе
-    const currLength = calcCurrentLengthAC(getMaxX1AC())
+    const currLength = axisX ? calcCurrentSizeAC(getMaxX1AC()) : length
 
     //если превысили кратность то начинаем с самого маленького
     if (currLength === length) reverseUnusedSpaceAC()

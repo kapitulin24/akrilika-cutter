@@ -1,29 +1,29 @@
 //создать новый лист
-import {calcCurrentLengthAC, pushNewPlateAC, setNewLengthPlateAC} from "../store/actionCreators"
+import {calcCurrentSizeAC, pushNewPlateAC, setNewSizePlateAC} from '../store/actionCreators'
 
-function createNewPlate(plates, length, height, startSpaceSymbol, unusedSpaceSymbol) {
-  let lastPlate = plates.length - 1, isCreated, newLength
-  const lastLength = plates[lastPlate]?.length || length
+function createNewPlate(plates, size, length, height, startSpaceSymbol, unusedSpaceSymbol) {
+  let lastPlate = plates.length - 1, isCreated, newSize
+  const lastSize = plates[lastPlate]?.size || size
 
-  //если длина последнего листа равна общей длине листа, то создаем новый лист
-  if (lastLength === length) {
+  //если размер последнего листа равен общему размеру, то создаем новый лист
+  if (lastSize === size) {
     const matrix = Array.from(Array(height), () => new Array(length).fill(unusedSpaceSymbol)),
       newPlate = {
-        length, height, items: [], matrix,
+        length, height, items: [], matrix, size,
         unusedSpace: [{x: 0, y: 0, w: length, h: height}],
         spaceSymbol: startSpaceSymbol
       }
 
     pushNewPlateAC(newPlate)
     isCreated = true
-  } else { //иначе добавляем к длине листа кратными частями
-    newLength = calcCurrentLengthAC(lastLength,  'ceil')
+  } else { //иначе добавляем к размеру листа кратными частями
+    newSize = calcCurrentSizeAC(lastSize,  'ceil')
 
-    if (newLength === lastLength && newLength < length) {
-      newLength = calcCurrentLengthAC(lastLength + 1, 'ceil')
+    if (newSize === lastSize && newSize < size) {
+      newSize = calcCurrentSizeAC(lastSize + 1, 'ceil')
     }
 
-    setNewLengthPlateAC(lastPlate, newLength)
+    setNewSizePlateAC(lastPlate, newSize)
     isCreated = false
   }
 

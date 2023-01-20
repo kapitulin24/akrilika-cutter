@@ -54,6 +54,9 @@ function validation(data) {
   if (data.prepareOutputPlates !== true && data.prepareOutputPlates !== false) {
     errors.push(`prepareOutputPlates is not bool`)
   }
+  if (data.axisX !== true && data.axisX !== false) {
+    errors.push(`axisX is not bool`)
+  }
 
   return errors
 }

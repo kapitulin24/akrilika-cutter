@@ -2,13 +2,14 @@
 import {fillRectAC, getCurrentIndexPlateAC, setNewUnusedSpaceAC} from "../store/actionCreators"
 import decreaseSort from "./decreaseSort"
 
-function findUnusedSpace(minPart, plates, height, symbols, index = getCurrentIndexPlateAC(), divideMode = false) {
-  const length = plates[index].length, res = [],
-    arr = plates[index].matrix,
-    spaceSymbol = plates[index].spaceSymbol === symbols.startSpace ? symbols.alternateSpace : symbols.startSpace,
-    divideSymbol = divideMode ? symbols.divide : symbols.rect,
-    //идем с шагом minPart - 1. в разы больше производительность и мы не пропустим отрезки с этим шагом
-    step = minPart - 1 > 0 ? minPart - 1 : 1
+function findUnusedSpace(minPart, plates, axisX, symbols, index = getCurrentIndexPlateAC(), divideMode = false) {
+  const currLength = axisX ? plates[index].size : plates[index].length, res = [],
+        currHeight = axisX ? plates[index].height : plates[index].size,
+        arr = plates[index].matrix,
+        spaceSymbol = plates[index].spaceSymbol === symbols.startSpace ? symbols.alternateSpace : symbols.startSpace,
+        divideSymbol = divideMode ? symbols.divide : symbols.rect,
+        //идем с шагом minPart - 1. в разы больше производительность и мы не пропустим отрезки с этим шагом
+        step = minPart - 1 > 0 ? minPart - 1 : 1
 
   plates[index].spaceSymbol = spaceSymbol
 
@@ -25,7 +26,7 @@ function findUnusedSpace(minPart, plates, height, symbols, index = getCurrentInd
   }
   const findEndY = (startX, startY) => {
     let h = 0, topY = 0
-    for (let y = startY; y < height; y++/* += step*/) {
+    for (let y = startY; y < currHeight; y++/* += step*/) {
       if (conditionFind(y, startX)) break
       h++
     }
@@ -39,7 +40,7 @@ function findUnusedSpace(minPart, plates, height, symbols, index = getCurrentInd
   //можно попробовать оптимизировать через findIndex
   const findEndX = (startX, startY, topY) => {
     let w = 0, leftX = 0
-    for (let x = startX; x < length; x++) {
+    for (let x = startX; x < currLength; x++) {
       if (conditionFind(startY, x) || conditionFind(startY - topY, x)) break
       w++
     }
@@ -54,8 +55,8 @@ function findUnusedSpace(minPart, plates, height, symbols, index = getCurrentInd
   }
 
   //ищем не занятое пространство
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < length; x += step) {
+  for (let y = 0; y < currHeight; y++) {
+    for (let x = 0; x < currLength; x += step) {
       if (arr[y][x] !== symbols.rect && arr[y][x] !== spaceSymbol && arr[y][x] !== divideSymbol) {
         x = findIndex(arr[y], x, y, step)
         const {h, y: topY} = findEndY(x, y),

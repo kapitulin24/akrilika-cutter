@@ -34,6 +34,7 @@ function calc(e) {
   data.nameIsPrefix = !!data.nameIsPrefix
   data.rotate = !!data.rotate
   data.cut = !!data.cut
+  data.axisX = !!data.axisX
   data.getAllData = true //для дебага
   data.prepareOutputPlates = false //для дебага
 
@@ -55,7 +56,9 @@ function calc(e) {
 function draw(cut, mode = 'items') {
   graph.innerHTML = ''
   const length = cut.config.length,
-    height = cut.config.height
+        height = cut.config.height,
+        axisX = cut.config.axisX
+
 
   cut.plates.forEach(items => {
     const canvas = document.createElement('canvas'),
@@ -106,12 +109,21 @@ function draw(cut, mode = 'items') {
     ctx.strokeStyle = 'red'
     ctx.beginPath();
     ctx.setLineDash([30, 10]);
-    ctx.moveTo(915, 0);
-    ctx.lineTo(915, 760);
-    ctx.moveTo(1830, 0);
-    ctx.lineTo(1830, 760);
-    ctx.moveTo(2745, 0);
-    ctx.lineTo(2745, 760);
+    if (axisX) {
+      const size = Math.round(length / 4)
+
+      ctx.moveTo(size, 0);
+      ctx.lineTo(size, height);
+      ctx.moveTo(size * 2, 0);
+      ctx.lineTo(size * 2, height);
+      ctx.moveTo(size * 3, 0);
+      ctx.lineTo(size * 3, height);
+    } else {
+      const size = Math.round(height / 2)
+
+      ctx.moveTo(0, size);
+      ctx.lineTo(length, size);
+    }
     ctx.stroke();
     ctx.strokeStyle = 'black'
     ctx.setLineDash([]);

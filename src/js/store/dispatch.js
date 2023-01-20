@@ -8,7 +8,7 @@ import {
   EXTRACT_PARTS,
   FILL_RECT,
   FIND_UNUSED_SPACE,
-  CALC_CURRENT_LENGTH,
+  CALC_CURRENT_SIZE,
   GET_MAX_X1,
   GET_PART_ITEM,
   GET_PARTS_LENGTH,
@@ -24,13 +24,13 @@ import {
   PUSH_NEW_PLATE,
   REVERSE_UNUSED_SPACE,
   SELECT_ITEMS_OF_LAST_PART,
-  SET_NEW_LENGTH_PLATE,
+  SET_NEW_SIZE_PLATE,
   SET_NEW_UNUSED_SPACE,
   VALIDATE_CONFIG_DATA,
   GET_CURRENT_INDEX_PLATE,
   GET_PLATE_ITEM,
   DELETE_PLATE_ITEM,
-  GET_PLATE_LENGTH,
+  GET_PLATE_SIZE,
   UPDATE_PART_NAME,
   UPDATE_PARTS_INFO_IN_PLATE,
   DELETE_LAST_PLATE,
@@ -40,19 +40,19 @@ import {
   GET_OPTIMIZATION_LEVEL,
   ADD_STATISTIC,
   GET_CONFIG_DATA,
-  GET_USED_PARTS, REMOVE_NOT_NEEDED_IN_PLATE, CHANGE_ITEM_TO_PLATE
+  GET_USED_PARTS, REMOVE_NOT_NEEDED_IN_PLATE, CHANGE_ITEM_TO_PLATE, CALC_SIZE, GET_CURRENT_SIZE
 } from './actions'
 import validation from "../functions/validation"
 import prepareConfig from "../functions/prepareConfig"
 import extractParts from "../functions/extractParts"
-import calcCurrentLength from "../functions/calcCurrentLength"
+import calcCurrentSize from "../functions/calcCurrentSize"
 import findUnusedSpace from "../functions/findUnusedSpace"
 import createNewPlate from "../functions/createNewPlate"
 import selectItemsOfLastPart from "../functions/selectItemsOfLastPart"
 import updatePartName from "../functions/updatePartName"
 import {divider} from "../functions/divider"
 import divisionOfProducts from "../functions/divisionOfProducts"
-import {calcCurrentLengthAC, fillRectAC, findUnusedSpaceAC, updatePartNameAC} from './actionCreators'
+import {calcCurrentSizeAC, fillRectAC, findUnusedSpaceAC, updatePartNameAC} from './actionCreators'
 import basicPositioning from "../functions/basicPositioning"
 
 function dispatch(action) {
@@ -82,19 +82,28 @@ function dispatch(action) {
     }
     case EXTRACT_PARTS: {
       //извлечь изделия с некоторыми преобразованиями
-      return store.setState({parts: extractParts(cnf.parts, cnf.name, cnf.length, cnf.partName, cnf.nameIsPrefix, cnf.minPart)})
+      return store.setState(
+        {parts: extractParts(cnf.parts, cnf.name, cnf.length, cnf.partName, cnf.nameIsPrefix, cnf.minPart)})
+    }
+    case CALC_SIZE: {
+      //основной размер с которым работаем
+      return store.setState({size: cnf.axisX ? cnf.length : cnf.height})
     }
     case CALC_SIZE_STEP: {
       //кратность листа в линейном выражении
-      return store.setState({sizeStep: cnf.length * cnf.step})
+      return store.setState({sizeStep: state.size * cnf.step})
     }
     case CALC_COUNT_PART: {
       //оно всегда будет очень близко к нужному. на всякий случай
-      return store.setState({countPart: Math.round(cnf.length / state.sizeStep)})
+      return store.setState({countPart: Math.round(state.size / state.sizeStep)})
     }
     case GET_CONFIG_DATA: {
       //данные конфига
       return cnf.hasOwnProperty(action.key) ? cnf[action.key] : cnf
+    }
+    case GET_CURRENT_SIZE: {
+      //текущий используемый размер
+      return state.size || null
     }
     case ADD_STATISTIC: {
       //добавить статистику
@@ -114,13 +123,33 @@ function dispatch(action) {
       return cnf.cut
     }
     case DIVIDER: {
-      return divider(state.plates, cnf.minPart, cnf.rotate, cnf.maxStack, state.symbols.divide, action.items, cnf.length, state.symbols.unusedSpace)
+      return divider(
+        state.plates,
+        cnf.minPart,
+        cnf.rotate,
+        cnf.maxStack,
+        state.symbols.divide,
+        action.items,
+        cnf.length,
+        state.symbols.unusedSpace
+      )
     }
     case BASIC_POSITIONING: {
-      return basicPositioning(cnf.rotate, state.maxIteration, cnf.length)
+      return basicPositioning(
+        cnf.rotate,
+        state.maxIteration,
+        cnf.length,
+        cnf.axisX
+      )
     }
     case DIVISION_OF_PRODUCTS: {
-      return divisionOfProducts(cnf.length, state.sizeStep, state.maxIteration, cnf.height, state.symbols.unusedSpace, state.config.showPartInName)
+      return divisionOfProducts(
+        state.sizeStep,
+        state.maxIteration,
+        cnf.height,
+        state.symbols.unusedSpace,
+        state.config.showPartInName
+      )
     }
     case PUSH_NEW_PLATE: {
       //пушим новый лист
@@ -128,20 +157,27 @@ function dispatch(action) {
     }
     case CREATE_NEW_PLATE: {
       //создать новый лист
-      return createNewPlate(state.plates, cnf.length, cnf.height, state.symbols.startSpace, state.symbols.unusedSpace)
+      return createNewPlate(
+        state.plates,
+        state.size,
+        cnf.length,
+        cnf.height,
+        state.symbols.startSpace,
+        state.symbols.unusedSpace
+      )
     }
-    case CALC_CURRENT_LENGTH: {
-      //текущая используемая длина листа
-      return calcCurrentLength(action.length, state.sizeStep, action.mode)
+    case CALC_CURRENT_SIZE: {
+      //текущий используемый размер листа
+      return calcCurrentSize(action.size, state.sizeStep, action.mode)
     }
-    case SET_NEW_LENGTH_PLATE: {
+    case SET_NEW_SIZE_PLATE: {
       //изменить длину листа
       if (typeof action.cb !== 'function') throw new Error('cb is not a function')
 
-      const length = state.plates[action.plate].length = action.length
+      const size = state.plates[action.plate].size = action.size
       action.cb()
       findUnusedSpaceAC(action.plate)
-      return length
+      return size
     }
     case GET_CURRENT_INDEX_PLATE: {
       //лист над которым работаем
@@ -149,7 +185,14 @@ function dispatch(action) {
     }
     case FIND_UNUSED_SPACE: {
       //поиск неиспользуемых пространств на листе
-      return findUnusedSpace(cnf.minPart, state.plates, cnf.height, state.symbols, action.index, action.divideMode)
+      return findUnusedSpace(
+        cnf.minPart,
+        state.plates,
+        cnf.axisX,
+        state.symbols,
+        action.index,
+        action.divideMode
+      )
     }
     case GET_OPTIMIZATION_LEVEL: {
       //уровень оптимизации
@@ -173,7 +216,7 @@ function dispatch(action) {
             maxUnused = e.x
           }
         })
-        length = calcCurrentLengthAC(maxUnused === 0 ? cnf.length : maxUnused, 'ceil')
+        length = calcCurrentSizeAC(maxUnused === 0 ? cnf.length : maxUnused, 'ceil')
       } else {
         length = state.plates[action.plate].length
       }
@@ -196,7 +239,8 @@ function dispatch(action) {
     }
     case CHANGE_ITEM_TO_PLATE: {
       //если вдруг кто-то решит изменить то что нельзя
-      ['x', 'w', 'y', 'h', 'rotate', 'fromPlate', 'id', 'height', 'length', 'count', 'part', 'parts', 'name', 'hem', 'edge'].forEach(e => {
+      ['x', 'w', 'y', 'h', 'rotate', 'fromPlate', 'id', 'height', 'length', 'count', 'part', 'parts', 'name', 'hem', 'edge']
+        .forEach(e => {
         if (action.data.hasOwnProperty(e)) {
           delete action.data[e]
           console.warn(`key ${e} is forbidden`)
@@ -247,11 +291,11 @@ function dispatch(action) {
     case DELETE_PLATE_ITEM: {
       return state.plates[action.plateIdx].items.splice(action.itemIdx, 1)
     }
-    case GET_PLATE_LENGTH: {
-      return state.plates[action.plateIdx].length
+    case GET_PLATE_SIZE: {
+      return state.plates[action.plateIdx].size
     }
     case SELECT_ITEMS_OF_LAST_PART: {
-      return selectItemsOfLastPart(cnf.length, state.sizeStep, state.countPart, action.index)
+      return selectItemsOfLastPart(state.size, state.sizeStep, state.countPart, action.index, cnf.axisX)
     }
     case UPDATE_PART_NAME: {
       return updatePartName(cnf.partName, action.partItemOrName, action.part)

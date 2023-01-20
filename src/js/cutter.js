@@ -3,22 +3,23 @@
 import {
   addStatisticAC,
   basicPositioningAC,
-  calcCountPartAC,
+  calcCountPartAC, calcSizeAC,
   calcSizeStepAC,
   changeItemToPlateAC,
   createNewPlateAC,
   divisionOfProductsAC,
-  extractPartsAC, getConfigDataAC,
+  extractPartsAC, getConfigDataAC, getCurrentSizeAC,
   getOptimizationLevelAC, getPlateItemAC, getPlateItemsLengthAC,
-  getPlateLengthAC,
+  getPlateSizeAC,
   getPlatesLengthAC,
   getStateAC, getUsedPartsAC,
   isCutAC,
   prepareConfigDataAC, removeNotNeededInPlateAC,
-  setNewLengthPlateAC,
+  setNewSizePlateAC,
   stateInitAC,
   validateConfigDataAC
 } from './store/actionCreators'
+import store from './store/store'
 
 export function cutter(param) {
   const startTime = new Date().getTime()
@@ -40,6 +41,7 @@ export function cutter(param) {
     optimization: 2,
     prepareOutputPlates: true, //c преобразованием выходных данных
     getAllData: false, //получить все данные
+    axisX: true,
     ...param
   }
   //endregion INPUT DATA
@@ -56,6 +58,7 @@ export function cutter(param) {
   prepareConfigDataAC(data)
   extractPartsAC()
 
+  calcSizeAC()
   calcSizeStepAC()
   calcCountPartAC()
   //endregion PREPARE DATA
@@ -67,9 +70,9 @@ export function cutter(param) {
     //уровень оптимизации
     for (let i = 0; i < getOptimizationLevelAC(); i++) {
       for (let j = 0; j < getPlatesLengthAC() - 1; j++) {
-        const length = getConfigDataAC('length')
-        if (getPlateLengthAC(j) < length) {
-          setNewLengthPlateAC(j, length)
+        const size = getCurrentSizeAC()
+        if (getPlateSizeAC(j) < size) {
+          setNewSizePlateAC(j, size)
         }
       }
       divisionOfProductsAC()

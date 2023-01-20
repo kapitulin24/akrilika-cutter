@@ -4,13 +4,13 @@ import {
   CALC_SIZE_STEP,
   CREATE_NEW_PLATE,
   EXTRACT_PARTS,
-  CALC_CURRENT_LENGTH,
+  CALC_CURRENT_SIZE,
   GET_PARTS_LENGTH,
   INITIAL_STATE,
   IS_CUT,
   PREPARE_CONFIG_DATA,
   PUSH_NEW_PLATE,
-  SET_NEW_LENGTH_PLATE,
+  SET_NEW_SIZE_PLATE,
   VALIDATE_CONFIG_DATA,
   GET_MAX_X1,
   REVERSE_UNUSED_SPACE,
@@ -30,7 +30,7 @@ import {
   GET_CURRENT_INDEX_PLATE,
   GET_PLATE_ITEM,
   DELETE_PLATE_ITEM,
-  GET_PLATE_LENGTH,
+  GET_PLATE_SIZE,
   UPDATE_PART_NAME,
   UPDATE_PARTS_INFO_IN_PLATE,
   DELETE_LAST_PLATE,
@@ -40,7 +40,7 @@ import {
   GET_OPTIMIZATION_LEVEL,
   ADD_STATISTIC,
   GET_CONFIG_DATA,
-  GET_USED_PARTS, REMOVE_NOT_NEEDED_IN_PLATE, CHANGE_ITEM_TO_PLATE
+  GET_USED_PARTS, REMOVE_NOT_NEEDED_IN_PLATE, CHANGE_ITEM_TO_PLATE, CALC_SIZE, GET_CURRENT_SIZE
 } from './actions'
 
 //region PREPARE DATA
@@ -49,6 +49,7 @@ export const getStateAC = () => dispatch({type: GET_STATE})
 export const validateConfigDataAC = (config) => dispatch({type: VALIDATE_CONFIG_DATA, config})
 export const prepareConfigDataAC = (config) => dispatch({type: PREPARE_CONFIG_DATA, config})
 export const extractPartsAC = () => dispatch({type: EXTRACT_PARTS})
+export const calcSizeAC = () => dispatch({type: CALC_SIZE})
 export const calcSizeStepAC = () => dispatch({type: CALC_SIZE_STEP})
 export const calcCountPartAC = () => dispatch({type: CALC_COUNT_PART})
 //endregion PREPARE DATA
@@ -58,15 +59,15 @@ export const getCurrentIndexPlateAC = () => dispatch({type: GET_CURRENT_INDEX_PL
 export const nextIndexPlateAC = () => dispatch({type: NEXT_INDEX_PLATE})
 export const createNewPlateAC = () => dispatch({type: CREATE_NEW_PLATE})
 export const pushNewPlateAC = (plate) => dispatch({type: PUSH_NEW_PLATE, plate})
-export const setNewLengthPlateAC = (plate, length, cb = () => {}) => dispatch({type: SET_NEW_LENGTH_PLATE, plate, length, cb})
+export const setNewSizePlateAC = (plate, size, cb = () => {}) => dispatch({type: SET_NEW_SIZE_PLATE, plate, size, cb})
 export const addItemToPlateAC = (plateIdx, item) => dispatch({type: ADD_ITEM_TO_PLATE, plateIdx, item})
 export const changeItemToPlateAC = (plateIdx, item, data) => dispatch({type: CHANGE_ITEM_TO_PLATE, plateIdx, item, data})
 export const deletePlateItemAC = (plateIdx, itemIdx) => dispatch({type: DELETE_PLATE_ITEM, plateIdx, itemIdx})
 export const getPlateItemsLengthAC = (plate) => dispatch({type: GET_PLATE_ITEMS_LENGTH, plate})
 export const getPlatesLengthAC = () => dispatch({type: GET_PLATES_LENGTH})
 export const getPlateItemAC = (plateIdx, itemIdx) => dispatch({type: GET_PLATE_ITEM, plateIdx, itemIdx})
-export const getPlateLengthAC = (plateIdx) => dispatch({type: GET_PLATE_LENGTH, plateIdx})
-export const calcCurrentLengthAC = (length, mode) => dispatch({type: CALC_CURRENT_LENGTH, length, mode})
+export const getPlateSizeAC = (plateIdx) => dispatch({type: GET_PLATE_SIZE, plateIdx})
+export const calcCurrentSizeAC = (size, mode) => dispatch({type: CALC_CURRENT_SIZE, size, mode})
 export const findUnusedSpaceAC = (index, divideMode) => dispatch({type: FIND_UNUSED_SPACE, index, divideMode})
 export const isCutAC = () => dispatch({type: IS_CUT})
 export const getPartsLengthAC = () => dispatch({type: GET_PARTS_LENGTH})
@@ -88,6 +89,7 @@ export const basicPositioningAC = () => dispatch({type: BASIC_POSITIONING})
 export const getOptimizationLevelAC = () => dispatch({type: GET_OPTIMIZATION_LEVEL})
 export const addStatisticAC = (obj) => dispatch({type: ADD_STATISTIC, obj})
 export const getConfigDataAC = (key) => dispatch({type: GET_CONFIG_DATA, key})
+export const getCurrentSizeAC = () => dispatch({type: GET_CURRENT_SIZE})
 export const getUsedPartsAC = (plate) => dispatch({type: GET_USED_PARTS, plate})
 export const removeNotNeededInPlateAC = () => dispatch({type: REMOVE_NOT_NEEDED_IN_PLATE})
 //endregion CALCULATION
