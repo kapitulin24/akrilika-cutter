@@ -208,20 +208,23 @@ function dispatch(action) {
       return Math.max(...state.plates[getIndexPLate()].items.map(e => e.x + e.w), 0)
     }
     case GET_USED_PARTS: {
-      let length
-      if (state.plates[action.plate].length === cnf.length) {
+      let size
+
+      if (state.plates[action.plate].size === state.size) {
         let maxUnused = 0
         state.plates[action.plate].unusedSpace.forEach(e => {
-          if (e.h === cnf.height && maxUnused < e.x) {
+          if (state.axisX && e.h === cnf.height && maxUnused < e.x) {
             maxUnused = e.x
+          } else if (!state.axisX && e.w === cnf.width && maxUnused < e.y) {
+            maxUnused = e.y
           }
         })
-        length = calcCurrentSizeAC(maxUnused === 0 ? cnf.length : maxUnused, 'ceil')
+        size = calcCurrentSizeAC(maxUnused === 0 ? state.size : maxUnused, 'ceil')
       } else {
-        length = state.plates[action.plate].length
+        size = state.plates[action.plate].size
       }
 
-      return Math.round(length / state.sizeStep)
+      return Math.round(size / state.sizeStep)
     }
     case REVERSE_UNUSED_SPACE: {
       return state.plates[getIndexPLate()].unusedSpace.reverse()

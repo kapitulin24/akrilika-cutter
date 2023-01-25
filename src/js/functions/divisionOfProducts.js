@@ -1,7 +1,7 @@
 import {
-  addItemToPlateAC, deleteLastPlateAC, dividerAC, fillRectAC, findUnusedSpaceAC, getPlateItemsLengthAC,
+  addItemToPlateAC, deleteLastPlateAC, dividerAC, fillRectAC, findUnusedSpaceAC, getConfigDataAC, getPlateItemsLengthAC,
   getPlateSizeAC, getPlatesLengthAC, selectItemsOfLastPartAC, setNewSizePlateAC
-} from "../store/actionCreators"
+} from '../store/actionCreators'
 import exceedingIterations from "./exceedingIterations"
 import updateInfoParts from "./updateInfoParts"
 
@@ -19,12 +19,14 @@ function divisionOfProducts(sizeStep, maxIteration, height, unusedSpaceSymbol, s
           return acc
         }, {}),
         comeBackItems = () => {
-        const x = getPlateSizeAC(lastPlateIndex)
+        const size = getPlateSizeAC(lastPlateIndex)
           const cb = () => {
-            fillRectAC({x, y: 0, w: sizeStep, h: height, value: unusedSpaceSymbol, index: lastPlateIndex})
+            let x = size, y = 0, w = sizeStep, h = height
+            if (!getConfigDataAC('axisX')) [x, y, w, h] = [y, x, h, w]
+            fillRectAC({x, y, w, h, value: unusedSpaceSymbol, index: lastPlateIndex})
             parts.forEach(item => addItemToPlateAC(lastPlateIndex, item))
           }
-          setNewSizePlateAC(lastPlateIndex, x + sizeStep, cb)
+          setNewSizePlateAC(lastPlateIndex, size + sizeStep, cb)
           lastPlateIndex--
         },
         putItems = () => {
