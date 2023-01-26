@@ -134,6 +134,7 @@ export function cutter(param) {
       plates: getStateAC().plates,
       statistic: getStateAC().statistic,
       countPart: getStateAC().countPart,
+      mainSize: getStateAC().size,
       errors: getStateAC().errors,
       sizeStep: getStateAC().sizeStep
     }
