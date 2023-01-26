@@ -40,7 +40,12 @@ import {
   GET_OPTIMIZATION_LEVEL,
   ADD_STATISTIC,
   GET_CONFIG_DATA,
-  GET_USED_PARTS, REMOVE_NOT_NEEDED_IN_PLATE, CHANGE_ITEM_TO_PLATE, CALC_SIZE, GET_CURRENT_SIZE
+  GET_USED_PARTS,
+  REMOVE_NOT_NEEDED_IN_PLATE,
+  CHANGE_ITEM_TO_PLATE,
+  CALC_SIZE,
+  GET_CURRENT_SIZE,
+  GET_UNUSED_PARTS_OF_PLATE
 } from './actions'
 import validation from "../functions/validation"
 import prepareConfig from "../functions/prepareConfig"
@@ -325,6 +330,14 @@ function dispatch(action) {
     //endregion CALCULATE
     case REMOVE_NOT_NEEDED_IN_PLATE: {
       return state.plates = state.plates.map(plate => plate.items)
+    }
+
+    case GET_UNUSED_PARTS_OF_PLATE: {
+      const max = Math.max(...state.plates[action.plateIndex].items.map(item => {
+        return cnf.axisX ? item.x + item.w : item.y + item.h
+      }))
+
+      return calcCurrentSizeAC(max, 'ceil')
     }
   }
 }

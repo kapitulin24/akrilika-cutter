@@ -12,7 +12,7 @@ import {
   getOptimizationLevelAC, getPlateItemAC, getPlateItemsLengthAC,
   getPlateSizeAC,
   getPlatesLengthAC,
-  getStateAC, getUsedPartsAC,
+  getStateAC, getUnusedPartsOfPlateAC, getUsedPartsAC,
   isCutAC,
   prepareConfigDataAC, removeNotNeededInPlateAC,
   setNewSizePlateAC,
@@ -66,7 +66,11 @@ export function cutter(param) {
   //region CALCULATE
   createNewPlateAC()
   basicPositioningAC()
-  if (isCutAC()) {
+  if (!isCutAC()) { //если нельзя кроить детали то на всех листах установим правильный использщованный размер
+    for (let j = 0; j < getPlatesLengthAC(); j++) {
+      setNewSizePlateAC(j, getUnusedPartsOfPlateAC(j))
+    }
+  } else { //пробуем делить детали, перед этим установим использованный размер на листах, кроме последнего, на максимальную
     //уровень оптимизации
     for (let i = 0; i < getOptimizationLevelAC(); i++) {
       for (let j = 0; j < getPlatesLengthAC() - 1; j++) {
@@ -85,14 +89,24 @@ export function cutter(param) {
     totalLength = 0,
     countOfPlates = getPlatesLengthAC(),
     countPartsInPlates = 0,
-    area = 0,
-    perimeter = 0
+    area = {element: 0, base: 0, hem: 0, edge: 0}, //площадь детали, основания и кромки с подгибом
+    perimeter = {element: 0, base: 0, hem: 0, edge: 0}
 
-  //perimeter and area
+  //total perimeter and area
   getStateAC().config.parts.forEach(part => {
-    area += (part.length * part.height) * part.count
-    perimeter += (part.length + part.height) * 2 * part.count
-  }, 0)
+    const length = part.length * part.count,
+          count = part.count * 2
+debugger
+    area.element += length * part.height
+    area.base += length * (part.height - part.hem - part.edge)
+    area.hem += length * part.hem
+    area.edge += length * part.edge
+
+    perimeter.element += (part.length + part.height) * count
+    perimeter.base += (part.length + (part.height - part.hem - part.edge)) * count
+    perimeter.hem += (part.length + part.hem) * count
+    perimeter.edge += (part.length + part.edge) *count
+  })
 
   for (let plate = 0; plate < countOfPlates; plate++) {
     const parts = getUsedPartsAC(plate)
@@ -105,8 +119,34 @@ export function cutter(param) {
       const plateItem = getPlateItemAC(plate, item)
 
       changeItemToPlateAC(plate, item, {
-        area: plateItem.w * plateItem.h,
-        perimeter: (plateItem.w + plateItem.h) * 2
+        area: {
+          product: {
+            element: plateItem.length * plateItem.height,
+            base: plateItem.length * (plateItem.height - plateItem.hem - plateItem.edge),
+            hem: plateItem.length * plateItem.hem,
+            edge: plateItem.length * plateItem.edge
+          },
+          part: {
+            element: plateItem.w * plateItem.h,
+            base: plateItem.w * (plateItem.h - plateItem.hem - plateItem.edge),
+            hem: plateItem.w * plateItem.hem,
+            edge: plateItem.w * plateItem.edge
+          }
+        },
+        perimeter: {
+          product: {
+            element: (plateItem.length + plateItem.height) * 2,
+            base: (plateItem.length + (plateItem.height - plateItem.hem - plateItem.edge)) * 2,
+            hem: (plateItem.length + plateItem.hem) * 2,
+            edge: (plateItem.length + plateItem.edge) * 2
+          },
+          part: {
+            element: (plateItem.w + plateItem.h) * 2,
+            base: (plateItem.w + (plateItem.h - plateItem.hem - plateItem.edge)) * 2,
+            hem: (plateItem.w + plateItem.hem) * 2,
+            edge: (plateItem.w + plateItem.edge) * 2
+          }
+        },
       })
     }
   }

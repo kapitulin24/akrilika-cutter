@@ -40,7 +40,12 @@ import {
   GET_OPTIMIZATION_LEVEL,
   ADD_STATISTIC,
   GET_CONFIG_DATA,
-  GET_USED_PARTS, REMOVE_NOT_NEEDED_IN_PLATE, CHANGE_ITEM_TO_PLATE, CALC_SIZE, GET_CURRENT_SIZE
+  GET_USED_PARTS,
+  REMOVE_NOT_NEEDED_IN_PLATE,
+  CHANGE_ITEM_TO_PLATE,
+  CALC_SIZE,
+  GET_CURRENT_SIZE,
+  GET_UNUSED_PARTS_OF_PLATE
 } from './actions'
 
 //region PREPARE DATA
@@ -92,4 +97,5 @@ export const getConfigDataAC = (key) => dispatch({type: GET_CONFIG_DATA, key})
 export const getCurrentSizeAC = () => dispatch({type: GET_CURRENT_SIZE})
 export const getUsedPartsAC = (plate) => dispatch({type: GET_USED_PARTS, plate})
 export const removeNotNeededInPlateAC = () => dispatch({type: REMOVE_NOT_NEEDED_IN_PLATE})
+export const getUnusedPartsOfPlateAC = (plateIndex) => dispatch({type: GET_UNUSED_PARTS_OF_PLATE, plateIndex})
 //endregion CALCULATION
