@@ -3,8 +3,9 @@ import {updatePartNameAC, updatePartsInfoInPlateAC} from "../store/actionCreator
 function updateInfoParts(uniqItems, dividedItems, showPartInName) {
   Object.keys(uniqItems).forEach(itemId => {
     const partsFilter = dividedItems.filter(part => part.id === itemId),
-      parts = uniqItems[itemId] + partsFilter.length - 1
+          parts = uniqItems[itemId].parts - uniqItems[itemId].items  + partsFilter.length
     let count = 0
+    console.log(uniqItems)
     partsFilter.forEach(part => {
       part.part = ++count
       part.parts = parts

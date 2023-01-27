@@ -15,7 +15,7 @@ function divisionOfProducts(sizeStep, maxIteration, height, unusedSpaceSymbol, s
     const parts = selectItemsOfLastPartAC(lastPlateIndex)
     if (parts.length) {
       const uniqItems = parts.reduce((acc, el) => {
-          acc[el.id] = el.parts
+          acc[el.id] = acc[el.id] ? {parts: el.parts, items: acc[el.id]['items'] + 1} : {parts: el.parts, items: 1}
           return acc
         }, {}),
         comeBackItems = () => {

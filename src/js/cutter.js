@@ -96,7 +96,7 @@ export function cutter(param) {
   getStateAC().config.parts.forEach(part => {
     const length = part.length * part.count,
           count = part.count * 2
-debugger
+
     area.element += length * part.height
     area.base += length * (part.height - part.hem - part.edge)
     area.hem += length * part.hem

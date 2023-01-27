@@ -85,7 +85,7 @@ function draw(cut, mode = 'items') {
       ctx.font = '22px Verdana'
       if (e.rotate) {
         ctx.rotate(-Math.PI / 2)
-        ctx.fillText(`${e.name} (${h}x${w}+${edge}+${hem} мм)`, -y - h + 10, x + 25)
+        ctx.fillText(`${e.name} (${h}x${w}+${edge}+${hem} мм ${e.parts})`, -y - h + 10, x + 25)
         ctx.rotate(Math.PI / 2)
         //кромка
         ctx.fillStyle = 'MediumAquamarine'
@@ -95,7 +95,7 @@ function draw(cut, mode = 'items') {
         ctx.fillRect(x + w - hem, y, hem, h)
         ctx.strokeRect(x, y, w, h)
       } else if (mode === 'items') {
-        ctx.fillText(`${e.name} (${w}x${h}+${edge}+${hem} мм)`, x + 10, y + 25)
+        ctx.fillText(`${e.name} (${w}x${h}+${edge}+${hem} мм ${e.parts})`, x + 10, y + 25)
         //кромка
         ctx.fillStyle = 'MediumAquamarine'
         ctx.fillRect(x, y + h - eh, w, edge)
