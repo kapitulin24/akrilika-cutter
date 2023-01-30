@@ -63,6 +63,7 @@ function findUnusedSpace(minPart, plates, axisX, symbols, index = getCurrentInde
           {w, x: leftX} = findEndX(x, y, topY)
         fillRectAC({x: x - leftX, w, y: y - topY, h, index, value: spaceSymbol})
         res.push({x: x - leftX, y: y - topY, w, h, fromPlate: index})
+        x = x + w
       }
     }
   }
