@@ -104,8 +104,8 @@ export function cutter(param) {
 
     perimeter.element += (part.length + part.height) * count
     perimeter.base += (part.length + (part.height - part.hem - part.edge)) * count
-    perimeter.hem += (part.length + part.hem) * count
-    perimeter.edge += (part.length + part.edge) *count
+    perimeter.hem += part.hem ? (part.length + part.hem) * count : 0
+    perimeter.edge += part.edge ? (part.length + part.edge) *count : 0
   })
 
   for (let plate = 0; plate < countOfPlates; plate++) {
@@ -137,14 +137,14 @@ export function cutter(param) {
           product: {
             element: (plateItem.length + plateItem.height) * 2,
             base: (plateItem.length + (plateItem.height - plateItem.hem - plateItem.edge)) * 2,
-            hem: (plateItem.length + plateItem.hem) * 2,
-            edge: (plateItem.length + plateItem.edge) * 2
+            hem: plateItem.hem ? (plateItem.length + plateItem.hem) * 2 : 0,
+            edge: plateItem.edge ? (plateItem.length + plateItem.edge) * 2 : 0
           },
           part: {
             element: (plateItem.w + plateItem.h) * 2,
             base: (plateItem.w + (plateItem.h - plateItem.hem - plateItem.edge)) * 2,
-            hem: (plateItem.w + plateItem.hem) * 2,
-            edge: (plateItem.w + plateItem.edge) * 2
+            hem: plateItem.hem ? (plateItem.w + plateItem.hem) * 2 : 0,
+            edge: plateItem.edge ? (plateItem.w + plateItem.edge) * 2 : 0
           }
         },
       })
