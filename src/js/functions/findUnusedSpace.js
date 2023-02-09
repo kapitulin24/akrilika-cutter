@@ -19,7 +19,7 @@ function findUnusedSpace(minPart, plates, axisX, symbols, index = getCurrentInde
     while (s > 1) {
       s = Math.ceil(s / 2)
       if (arr[x] !== arr[x - 1]) return x
-      else if (conditionFind(y, x)) x += s
+      else if (conditionFind(y, x) || arr[x] !== arr[x + 1]) x += s
       else x -= s
     }
     return x
