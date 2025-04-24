@@ -5,11 +5,10 @@
 .idea/
 .vscode/
 node_modules/
-dist/
-build/
 /public/images
 **font**/
 **fonts**/
 **vendor/
 temp/
 **/composer.bat
+/build/index.html
