@@ -3,6 +3,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = (env) => {
   const dev = !!env['dev'];
+  const worker = !!env['worker'];
   return {
     mode: dev ? 'development' : 'production', // production / development
     watch: dev, // слежка за изменениями файлов(или флаг при запуске)
@@ -13,10 +14,10 @@ module.exports = (env) => {
     },
 
     entry: {
-      main: path.resolve(__dirname, `./src/js/${dev ? 'index' : 'cutter'}.js`),
+      main: path.resolve(__dirname, `./src/js/${dev ? 'index' : worker && !dev ? 'worker' : 'cutter'}.js`),
     },
     output : {
-      filename     : `cutter${!dev ? '.min' : ''}.js`,
+      filename     : worker && !dev ? 'worker.js' : `cutter${!dev ? '.min' : ''}.js`,
       path           : path.resolve(__dirname, 'build'),
       scriptType   : 'module',
       module       : true,

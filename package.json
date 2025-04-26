@@ -5,7 +5,8 @@
   "main": "webpack.config.js",
   "scripts": {
     "prod": "webpack --env prod",
-    "dev": "webpack --env dev"
+    "dev": "webpack --env dev",
+    "worker": "webpack --env prod worker"
   },
   "author": "Denis Kapitulin",
   "license": "ISC",
